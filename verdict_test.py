@@ -67,9 +67,9 @@ if __name__ == "__main__":
                     inter_total += [inter_loc_score,inter_title_score,inter_laws_score]
     # 印出個別分數
     print('em分數: ')
-    print("{:.2f}".format(numpy.mean(em_loc)),"{:.2f}".format(numpy.mean(em_tit)),"{:.2f}".format(numpy.mean(em_law)))
+    print("單位: " + "{:.2f}".format(numpy.mean(em_loc)),"職稱: " + "{:.2f}".format(numpy.mean(em_tit)),"所犯法條: " + "{:.2f}".format(numpy.mean(em_law)))
     print('交集分數: ')
-    print("{:.2f}".format(numpy.mean(inter_loc)),"{:.2f}".format(numpy.mean(inter_tit)),"{:.2f}".format(numpy.mean(inter_law)))
+    print("單位: " + "{:.2f}".format(numpy.mean(inter_loc)),"職稱: " + "{:.2f}".format(numpy.mean(inter_tit)),"所犯法條: " + "{:.2f}".format(numpy.mean(inter_law)))
     # 印出總分
     print('===============')
     print('總分')

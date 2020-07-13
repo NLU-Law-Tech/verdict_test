@@ -4,35 +4,35 @@
 		"name" : "陳水在" ,
 		"job_location" : ["金門縣","金酒公司"] ,
 		"job_title" : ["縣長","董事長"] ,
-		"laws" : [""]
+		"laws" : []
 	},
 	{
 		"content_id" : "41" ,
 		"name" : "辛寬得" ,
 		"job_location" : ["金酒公司"] ,
 		"job_title" : ["總經理"] ,
-		"laws" : [""]
+		"laws" : []
 	},
 	{
 		"content_id" : "41" ,
 		"name" : "李增財" ,
 		"job_location" : ["金門縣政府民政局","金酒公司"] ,
 		"job_title" : ["局長","副總經理"] ,
-		"laws" : [""]
+		"laws" : []
 	},
 	{
 		"content_id" : "41" ,
 		"name" : "吳學良" ,
 		"job_location" : ["金酒公司研發組"] ,
 		"job_title" : ["代理組長"] ,
-		"laws" : [""]
+		"laws" : []
 	},
 	{
 		"content_id" : "41" ,
 		"name" : "李增欽" ,
 		"job_location" : ["亞洲公司"] ,
 		"job_title" : ["副總經理"] ,
-		"laws" : [""]
+		"laws" : []
 	},
 	{
 		"content_id" : "46" ,
@@ -58,8 +58,8 @@
 	{
 		"content_id" : "76" ,
 		"name" : "李良海" ,
-		"job_location" : [""] ,
-		"job_title" : [""] ,
+		"job_location" : [] ,
+		"job_title" : [] ,
 		"laws" : ["刑事訴訟法第412條"]
 	},
 	{
@@ -74,48 +74,41 @@
 		"name" : "于智勇" ,
 		"job_location" : ["前瞻公司","優廣角公司"] ,
 		"job_title" : ["負責人"] ,
-		"laws" : [""]
+		"laws" : []
 	},
 	{
 		"content_id" : "99" ,
 		"name" : "潘同乾" ,
-		"job_location" : [""] ,
-		"job_title" : [""] ,
-		"laws" : [""]
+		"job_location" : [] ,
+		"job_title" : [] ,
+		"laws" : []
 	},
 	{
-		"content_id" : "" ,
-		"name" : "" ,
-		"job_location" : [""] ,
-		"job_title" : [""] ,
-		"laws" : [""]
+		"content_id" : "124" ,
+		"name" : "曹鳳珠" ,
+		"job_location" : [] ,
+		"job_title" : [] ,
+		"laws" : ["中華民國刑法第210條","中華民國刑法第216條","中華民國刑法第310條"]
 	},
 	{
-		"content_id" : "" ,
-		"name" : "" ,
-		"job_location" : [""] ,
-		"job_title" : [""] ,
-		"laws" : [""]
+		"content_id" : "181" ,
+		"name" : "吳淑慧" ,
+		"job_location" : ["金門縣養護工程所"] ,
+		"job_title" : ["會計主任"] ,
+		"laws" : ["刑法第216條","刑法第213條"]
 	},
 	{
-		"content_id" : "" ,
-		"name" : "" ,
-		"job_location" : [""] ,
-		"job_title" : [""] ,
-		"laws" : [""]
+		"content_id" : "181" ,
+		"name" : "徐國輝" ,
+		"job_location" : ["禾昌獨資商號"] ,
+		"job_title" : ["負責人"] ,
+		"laws" : ["貪污治罪條例第5條第1項第2款","貪污治罪條例第8條第2項","貪污治罪條例第12條第1項","刑法第216條","刑法第28條","刑法第213條","刑法第214條","刑法第37條第2項","刑法第55條"]
 	},
 	{
-		"content_id" : "" ,
-		"name" : "" ,
-		"job_location" : [""] ,
-		"job_title" : [""] ,
-		"laws" : [""]
-	},
-	{
-		"content_id" : "" ,
-		"name" : "" ,
-		"job_location" : [""] ,
-		"job_title" : [""] ,
-		"laws" : [""]
+		"content_id" : "181" ,
+		"name" : "徐士傑" ,
+		"job_location" : [] ,
+		"job_title" : [] ,
+		"laws" : ["貪污治罪條例第5條第1項第2款","貪污治罪條例第8條第2項","貪污治罪條例第12條第1項","刑法第216條","刑法第28條","刑法第213條","刑法第214條","刑法第37條第2項","刑法第55條"]
 	}
 ]

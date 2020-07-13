@@ -1,16 +1,114 @@
 [
 	{
-		"content_id" : "2" ,
-		"name" : "吳柯森" ,
-		"job_location" : ["停車場"] ,
-		"job_title" : ["管理員"] ,
-		"laws" : ["中華民國刑法第276條第1項","中華民國刑法第140條"]
-    },
+		"content_id" : "41" ,
+		"name" : "陳水在" ,
+		"job_location" : ["金酒公司"] ,
+		"job_title" : ["董事長"] ,
+		"laws" : []
+	},
 	{
-		"content_id" : "3" ,
-		"name" : "林志清" ,
-		"job_location" : [""] ,
-		"job_title" : ["自由業","管理員"] ,
-		"laws" : ["中華民國刑法第185條之3","中華民國刑法第140條"]
+		"content_id" : "41" ,
+		"name" : "辛寬得" ,
+		"job_location" : [] ,
+		"job_title" : [] ,
+		"laws" : []
+	},
+	{
+		"content_id" : "41" ,
+		"name" : "李增財" ,
+		"job_location" : ["金門縣政府民政局","金酒公司"] ,
+		"job_title" : ["局長","副總經理"] ,
+		"laws" : []
+	},
+	{
+		"content_id" : "41" ,
+		"name" : "吳學良" ,
+		"job_location" : ["金酒公司研發組"] ,
+		"job_title" : ["代理組長"] ,
+		"laws" : ["中華民國刑法第213條"]
+	},
+	{
+		"content_id" : "41" ,
+		"name" : "李增欽" ,
+		"job_location" : ["亞洲公司"] ,
+		"job_title" : ["總經理"] ,
+		"laws" : []
+	},
+	{
+		"content_id" : "46" ,
+		"name" : "呂添全" ,
+		"job_location" : ["印刷廠"] ,
+		"job_title" : ["作業員"] ,
+		"laws" : ["中華民國刑法第213條"]
+	},
+	{
+		"content_id" : "49" ,
+		"name" : "洪仁忠" ,
+		"job_location" : ["坤龍航運股份有限公司"] ,
+		"job_title" : ["總經理"] ,
+		"laws" : []
+	},
+	{
+		"content_id" : "69" ,
+		"name" : "陳瑞通" ,
+		"job_location" : ["金門縣警察局"] ,
+		"job_title" : ["局長"] ,
+		"laws" : ["商業會計法第七十一條第一款"]
+	},
+	{
+		"content_id" : "76" ,
+		"name" : "李良海" ,
+		"job_location" : [] ,
+		"job_title" : [] ,
+		"laws" : ["刑事訴訟法第412條"]
+	},
+	{
+		"content_id" : "99" ,
+		"name" : "蔡秋玲" ,
+		"job_location" : ["金門酒廠實業股份有限公司"] ,
+		"job_title" : ["副總經理"] ,
+		"laws" : []
+	},
+	{
+		"content_id" : "99" ,
+		"name" : "于智勇" ,
+		"job_location" : ["優廣角公司"] ,
+		"job_title" : ["負責人"] ,
+		"laws" : []
+	},
+	{
+		"content_id" : "99" ,
+		"name" : "潘同乾" ,
+		"job_location" : ["優廣角公司"] ,
+		"job_title" : ["負責人"] ,
+		"laws" : []
+	},
+	{
+		"content_id" : "124" ,
+		"name" : "曹鳳珠" ,
+		"job_location" : [] ,
+		"job_title" : [] ,
+		"laws" : ["中華民國刑法第216條","中華民國刑法第310條"]
+	},
+	{
+		"content_id" : "181" ,
+		"name" : "吳淑慧" ,
+		"job_location" : [] ,
+		"job_title" : [] ,
+		"laws" : ["刑法第216條","刑法第213條"]
+	},
+	{
+		"content_id" : "181" ,
+		"name" : "徐國輝" ,
+		"job_location" : ["禾昌獨資商號"] ,
+		"job_title" : ["負責人"] ,
+		"laws" : ["貪污治罪條例第5條第1項第2款","刑法第216條","刑法第28條","刑法第213條","刑法第214條","刑法第37條第2項","刑法第55條"]
+	},
+	{
+		"content_id" : "181" ,
+		"name" : "徐士傑" ,
+		"job_location" : [] ,
+		"job_title" : [] ,
+		"laws" : ["貪污治罪條例第8條第2項","刑法第216條","刑法第28條","刑法第37條第2項","刑法第55條"]
 	}
 ]
