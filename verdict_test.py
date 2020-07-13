@@ -70,5 +70,7 @@ if __name__ == "__main__":
     print('交集分數: ')
     print("{:.2f}".format(numpy.mean(inter_loc)),"{:.2f}".format(numpy.mean(inter_tit)),"{:.2f}".format(numpy.mean(inter_law)))
     # 印出總分
+    print('===============')
+    print('總分')
     print("{:.2f}".format((numpy.mean(em_total))))
     print("{:.2f}".format(numpy.mean(inter_total)))
