@@ -9,7 +9,8 @@ def Score_calculate(ans_list,predict_list):
     if ans_list == predict_list:
         temp_em += 1
     # set(ans_list).intersection(set(predict_list)) # 交集個數
-    temp_inter += len(set(ans_list).intersection(set(predict_list))) / len(ans_list)
+    if len(ans_list) >0:
+        temp_inter += len(set(ans_list).intersection(set(predict_list))) / len(ans_list)
     return temp_em,temp_inter
 
 if __name__ == "__main__":
