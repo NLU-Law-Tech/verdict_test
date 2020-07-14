@@ -3,6 +3,14 @@ import numpy
 
 # ans_list及predict_list為整串預測出的答案list
 # 計算每一篇判決書之分數
+def get_judgement(id, judgement_path='new2000.txt'):
+    with open(judgement_path,'r',encoding='utf-8') as f:
+        for doc in f.readlines():
+            doc = json.loads(doc)
+            if id == doc['_id']:
+                return doc['judgement']
+    return ''
+
 def Score_calculate(ans_list,predict_list):
     temp_em = 0
     temp_inter = 0
@@ -13,10 +21,10 @@ def Score_calculate(ans_list,predict_list):
         temp_inter += len(set(ans_list).intersection(set(predict_list))) / len(ans_list)
     return temp_em,temp_inter
 
-def main():
-    with open('ans.json', 'r', encoding='utf-8') as fp:
+def main(ans_file='ans.json',predict_file='predict.json'):
+    with open(ans_file, 'r', encoding='utf-8') as fp:
         ans = json.loads(fp.read())
-    with open('predict.json', 'r', encoding='utf-8') as fp:
+    with open(predict_file, 'r', encoding='utf-8') as fp:
         predict = json.loads(fp.read())
     # 總分 list
     em_total = []
@@ -54,8 +62,6 @@ def main():
                     # print(em_loc_score, em_title_score, em_laws_score)
                     # print(inter_loc_score, inter_title_score, inter_laws_score)
                     
-                    
-
                     em_loc.append(em_loc_score)
                     em_tit.append(em_title_score)
                     em_law.append(em_laws_score)
