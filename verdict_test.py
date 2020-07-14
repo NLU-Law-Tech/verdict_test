@@ -13,7 +13,7 @@ def Score_calculate(ans_list,predict_list):
         temp_inter += len(set(ans_list).intersection(set(predict_list))) / len(ans_list)
     return temp_em,temp_inter
 
-if __name__ == "__main__":
+def main():
     with open('ans.json', 'r', encoding='utf-8') as fp:
         ans = json.loads(fp.read())
     with open('predict.json', 'r', encoding='utf-8') as fp:
@@ -75,3 +75,6 @@ if __name__ == "__main__":
     print('總分')
     print("{:.2f}".format((numpy.mean(em_total))))
     print("{:.2f}".format(numpy.mean(inter_total)))
+
+if __name__ == "__main__":
+    main()
