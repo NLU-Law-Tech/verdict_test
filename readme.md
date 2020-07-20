@@ -19,7 +19,7 @@
 	{
 		"content_id" : "3" ,
 		"name" : "林志清" ,
-		"job_location" : [""] ,
+		"job_location" : [] ,
 		"job_title" : ["自由業","管理員"] ,
 		"laws" : ["中華民國刑法第185條之3","中華民國刑法第140條"]
 	}
