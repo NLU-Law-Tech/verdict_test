@@ -86,7 +86,7 @@ def countup(ans_file = 'ans.json'):
             elif key == 'name':
                 verdict_name.append(value)
     print('判決書數量 : ' + str(len(set(verdict_list))))
-    print('被告數量   : ' + str(len(set(verdict_name))))
+    print('被告數量   : ' + str(len(verdict_name)))
 
 def score_calculate(ans_list, predict_list):
 
