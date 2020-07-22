@@ -218,7 +218,20 @@ def main(ans_file = 'ans.json', predict_file = 'predict.json'):
     print('Recall     :', "{:.2f}".format(numpy.mean(rec_total)))
     print('F1 Score   :', "{:.2f}".format(numpy.mean(f1_total)))
     print('=================')
-    countup()
+    
+    with open(ans_file, 'r', encoding = 'utf-8') as fp:
+        ans = json.loads(fp.read())
+
+    verdict_list = []
+    verdict_name = []
+    for content in ans:
+        for key, value in content.items():
+            if key == 'content_id':
+                verdict_list.append(value)
+            elif key == 'name':
+                verdict_name.append(value)
+    print('判決書數量 : ' + str(len(set(verdict_list))))
+    print('被告數量   : ' + str(len(verdict_name)))
 
 if __name__ == "__main__":
     main()
