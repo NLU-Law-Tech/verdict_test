@@ -42,10 +42,10 @@ def precision(ans_list, predict_list):
     tp = len(ans & predict)
     fp = len(predict) - tp
     if len(ans_list) == 0:
-        if len(predict_list) != 0:
-            temp_inter = 0
-        else:
+        if len(predict_list) == 0:
             temp_inter = 1
+        else:
+            temp_inter = 0
     else:
         try: # tp > 0
             temp_precision = float(tp/(tp+fp))
@@ -60,10 +60,10 @@ def recall(ans_list, predict_list):
     tp = len(ans & predict)
     fn = len(ans) - tp
     if len(ans_list) == 0:
-        if len(predict_list) != 0:
-            temp_inter = 0
-        else:
+        if len(predict_list) == 0:
             temp_inter = 1
+        else:
+            temp_inter = 0
     else:
         try: # tp > 0
             temp_recall = float(tp/(tp+fn))
