@@ -91,7 +91,7 @@ def f1score(ans_list, predict_list):
 # 統計判決書有幾篇幾個被告
 def countup(ans_file = 'db_ans_data'):
     ans_list = []
-    for filename in os.listdir('db_ans_data'):
+    for filename in os.listdir(ans_file):
         ans_list.append(filename.replace('.txt',""))
 
     verdict_name = []
