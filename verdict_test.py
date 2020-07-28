@@ -33,7 +33,7 @@ def fuzzymatch(ans_list, predict_list):
     else:    
         for subpredict in predict_list:
             for subans in ans_list:
-                if all(pred in subpredict for pred in subans):
+                if all(pred in subans for pred in subpredict):
                     try:
                         temp_fuzzy += 1/len(ans_list)
                     except:
