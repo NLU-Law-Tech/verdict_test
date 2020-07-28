@@ -4,13 +4,14 @@ from fuzzywuzzy import fuzz
 
 # ans_list及predict_list為整串預測出的答案list
 # 計算每一篇判決書之分數
-def get_judgement(id, judgement_path='new2000.txt'):
-    with open(judgement_path,'r',encoding='utf-8') as f:
-        for doc in f.readlines():
-            doc = json.loads(doc)
-            if id == doc['_id']:
+def get_judgement(id, judgement_path='test_data'):
+    try:
+        with open(judgement_path+'/' + id + '.txt','r',encoding='utf-8') as f:
+            for doc in f.readlines():
+                doc = json.loads(doc)
                 return doc['judgement']
-    return ''
+    except:
+        return ''    
 
 def exactmatch(ans_list, predict_list):
     temp_em = 0
