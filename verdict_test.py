@@ -236,7 +236,7 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json'):
     print('Recall     :', "{:.2f}".format(numpy.mean(rec_total)))
     print('F1 Score   :', "{:.2f}".format(numpy.mean(f1_total)))
     print('=================')
-    countup()
+    countup(ans_file = ans_file)
 
 if __name__ == "__main__":
     main()
