@@ -4,14 +4,13 @@ from fuzzywuzzy import fuzz
 
 # ans_list及predict_list為整串預測出的答案list
 # 計算每一篇判決書之分數
-def get_judgement(_id, judgement_path = "test_data"):
-    try:
-        with open(judgement_path + '/' + _id + '.txt','r',encoding='utf-8') as f:
-            for doc in f.readlines():
-                doc = json.loads(doc)
+def get_judgement(id, judgement_path='new2000.txt'):
+    with open(judgement_path,'r',encoding='utf-8') as f:
+        for doc in f.readlines():
+            doc = json.loads(doc)
+            if id == doc['_id']:
                 return doc['judgement']
-    except:
-        return ''
+    return ''
 
 def exactmatch(ans_list, predict_list):
     temp_em = 0
@@ -19,19 +18,31 @@ def exactmatch(ans_list, predict_list):
         temp_em += 1
     return temp_em
 
-def fuzzymatch(ans_list, predict_list, threshold):
+# def fuzzymatch(ans_list, predict_list, threshold):
+#     temp_fuzzy = 0
+#     if fuzz.ratio(ans_list, predict_list) > threshold:
+#         temp_fuzzy += 1
+#     return temp_fuzzy
+
+def fuzzymatch(ans_list, predict_list):
     temp_fuzzy = 0
-    if fuzz.ratio(ans_list, predict_list) > threshold:
+    if ans_list == predict_list:
         temp_fuzzy += 1
+    else:    
+        for subpredict in predict_list:
+            for subans in ans_list:
+                if all(pred in subpredict for pred in subans):
+                    break
+        try:
+            temp_fuzzy = temp_fuzzy/len(ans_list)
+        except:
+            temp_fuzzy = 0
     return temp_fuzzy
 
 def intersect(ans_list, predict_list):
     temp_inter = 0
     if len(ans_list) == 0:
-        if len(predict_list) != 0:
-            temp_inter = 0
-        else:
-            temp_inter = 1
+        temp_inter = 0
     else:
         temp_inter += len(set(ans_list).intersection(set(predict_list))) / len(ans_list)
     return temp_inter
@@ -43,10 +54,7 @@ def precision(ans_list, predict_list):
     tp = len(ans & predict)
     fp = len(predict) - tp
     if len(ans_list) == 0:
-        if len(predict_list) == 0:
-            temp_inter = 1
-        else:
-            temp_inter = 0
+        temp_precision = 0
     else:
         try: # tp > 0
             temp_precision = float(tp/(tp+fp))
@@ -61,10 +69,7 @@ def recall(ans_list, predict_list):
     tp = len(ans & predict)
     fn = len(ans) - tp
     if len(ans_list) == 0:
-        if len(predict_list) == 0:
-            temp_inter = 1
-        else:
-            temp_inter = 0
+        temp_recall = 0
     else:
         try: # tp > 0
             temp_recall = float(tp/(tp+fn))
@@ -116,7 +121,8 @@ def score_calculate(ans_list, predict_list):
     temp_f1 += f1score(ans_list, predict_list)
 
     temp_fuzzy = 0
-    temp_fuzzy += fuzzymatch(ans_list, predict_list, 50)
+    # temp_fuzzy += fuzzymatch(ans_list, predict_list, 50)
+    temp_fuzzy += fuzzymatch(ans_list, predict_list)
 
     return temp_em, temp_inter, temp_precision, temp_recall, temp_f1, temp_fuzzy
 
@@ -228,20 +234,7 @@ def main(ans_file = 'ans.json', predict_file = 'predict.json'):
     print('Recall     :', "{:.2f}".format(numpy.mean(rec_total)))
     print('F1 Score   :', "{:.2f}".format(numpy.mean(f1_total)))
     print('=================')
-
-    with open(ans_file, 'r', encoding = 'utf-8') as fp:
-        ans = json.loads(fp.read())
-
-    verdict_list = []
-    verdict_name = []
-    for content in ans:
-        for key, value in content.items():
-            if key == 'content_id':
-                verdict_list.append(value)
-            elif key == 'name':
-                verdict_name.append(value)
-    print('判決書數量 : ' + str(len(set(verdict_list))))
-    print('被告數量   : ' + str(len(verdict_name)))
+    countup()
 
 if __name__ == "__main__":
     main()
