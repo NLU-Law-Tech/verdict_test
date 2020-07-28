@@ -1,0 +1,61 @@
+[
+    {
+        "content_id": "5d30da9fcbd1c48dc9762383",
+        "name": "陳水在",
+        "job_location": [
+            "金門縣",
+            "金酒公司"
+        ],
+        "job_title": [
+            "縣長",
+            "董事長"
+        ],
+        "laws": []
+    },
+    {
+        "content_id": "5d30da9fcbd1c48dc9762383",
+        "name": "辛寬得",
+        "job_location": [
+            "金酒公司"
+        ],
+        "job_title": [
+            "總經理"
+        ],
+        "laws": []
+    },
+    {
+        "content_id": "5d30da9fcbd1c48dc9762383",
+        "name": "李增財",
+        "job_location": [
+            "金門縣政府民政局",
+            "金酒公司"
+        ],
+        "job_title": [
+            "局長",
+            "副總經理"
+        ],
+        "laws": []
+    },
+    {
+        "content_id": "5d30da9fcbd1c48dc9762383",
+        "name": "吳學良",
+        "job_location": [
+            "金酒公司研發組"
+        ],
+        "job_title": [
+            "代理組長"
+        ],
+        "laws": []
+    },
+    {
+        "content_id": "5d30da9fcbd1c48dc9762383",
+        "name": "李增欽",
+        "job_location": [
+            "亞洲公司"
+        ],
+        "job_title": [
+            "副總經理"
+        ],
+        "laws": []
+    }
+]
