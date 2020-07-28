@@ -19,9 +19,9 @@ def exactmatch(ans_list, predict_list):
         temp_em += 1
     return temp_em
 
-def fuzzymatch(ans_list, predict_list):
+def fuzzymatch(ans_list, predict_list, threshold):
     temp_fuzzy = 0
-    if fuzz.ratio(ans_list, predict_list) > 80:
+    if fuzz.ratio(ans_list, predict_list) > threshold:
         temp_fuzzy += 1
     return temp_fuzzy
 
@@ -116,7 +116,7 @@ def score_calculate(ans_list, predict_list):
     temp_f1 += f1score(ans_list, predict_list)
 
     temp_fuzzy = 0
-    temp_fuzzy += fuzzymatch(ans_list, predict_list)
+    temp_fuzzy += fuzzymatch(ans_list, predict_list, 50)
 
     return temp_em, temp_inter, temp_precision, temp_recall, temp_f1, temp_fuzzy
 
