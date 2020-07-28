@@ -20,7 +20,8 @@ def get_ori_data():
     data_list = json.loads(r.text)
     with open("db_ori.txt","w",encoding='utf-8') as f:
         for data in data_list:
-            f.write(json.dumps(data,ensure_ascii=False))
+            _s = data['verdict'].replace("\r\n","\\r\\n").replace("\n",'\\n')
+            f.write(json.dumps(json.loads(_s),ensure_ascii=False))
             f.write('\n')
 
 # 資料比對(同時擁有判決書和答案的編號作保留)
@@ -65,11 +66,12 @@ def copy_file():
             shutil.copy('ans_data/' + name + '.json', 'db_ans_data')
 
 if __name__ == "__main__":
-    shutil.rmtree('db_ans_data')
-    shutil.rmtree('db_ori_data')
+    if os.path.isdir('db_ans_data'):
+        shutil.rmtree('db_ans_data')
+        shutil.rmtree('db_ori_data')
     get_labeled_data()
     get_ori_data()
-    disassemble_origin(judgement_path='db_ori.txt', save_path='db_ori_data', _id = 'content_id')
+    disassemble_origin(judgement_path='db_ori.txt', save_path='db_ori_data', _id = '_id')
     disassemble_ans(ans_path='db_ans.json', save_path='db_ans_data')
     check_file()
     copy_file()

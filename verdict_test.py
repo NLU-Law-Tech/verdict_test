@@ -4,9 +4,9 @@ from fuzzywuzzy import fuzz
 
 # ans_list及predict_list為整串預測出的答案list
 # 計算每一篇判決書之分數
-def get_judgement(id, judgement_path = "test_data"):
+def get_judgement(_id, judgement_path = "test_data"):
     try:
-        with open(judgement_path + '/' + id + '.txt','r',encoding='utf-8') as f:
+        with open(judgement_path + '/' + _id + '.txt','r',encoding='utf-8') as f:
             for doc in f.readlines():
                 doc = json.loads(doc)
                 return doc['judgement']
