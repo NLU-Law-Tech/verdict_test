@@ -34,11 +34,10 @@ def fuzzymatch(ans_list, predict_list):
         for subpredict in predict_list:
             for subans in ans_list:
                 if all(pred in subpredict for pred in subans):
-                    break
-        try:
-            temp_fuzzy = temp_fuzzy/len(ans_list)
-        except:
-            temp_fuzzy = 0
+                    try:
+                        temp_fuzzy += 1/len(ans_list)
+                    except:
+                        pass
     return temp_fuzzy
 
 def intersect(ans_list, predict_list):
