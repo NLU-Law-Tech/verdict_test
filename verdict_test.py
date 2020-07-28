@@ -127,10 +127,8 @@ def score_calculate(ans_list, predict_list):
 
     return temp_em, temp_inter, temp_precision, temp_recall, temp_f1, temp_fuzzy
 
-def main(ans_file = 'ans.json', predict_file = 'predict.json'):
+def main(ans_file = 'db_ans_data', predict_file = 'predict.json'):
 
-    with open(ans_file, 'r', encoding = 'utf-8') as fp:
-        ans = json.loads(fp.read())
     with open(predict_file, 'r', encoding = 'utf-8') as fp:
         predict = json.loads(fp.read())
 
@@ -145,70 +143,72 @@ def main(ans_file = 'ans.json', predict_file = 'predict.json'):
     f1_loc, f1_tit, f1_law = ([] for _ in range(3))
     fuzzy_loc, fuzzy_tit, fuzzy_law = ([] for _ in range(3))
 
-    for ans_defendant in ans:
-        for pred_defendant in predict:
-            if ans_defendant['content_id'] == pred_defendant['content_id']:
-            
-                # 每篇的分數 
-                em_loc_score = em_title_score = em_laws_score = 0
-                inter_loc_score = inter_title_score = inter_laws_score = 0
-                precision_loc_score = precision_title_score = precision_laws_score = 0
-                recall_loc_score = recall_title_score = recall_laws_score = 0
-                f1_loc_score = f1_title_score = f1_laws_score = 0
-                fuzzy_loc_score = fuzzy_title_score = fuzzy_laws_score = 0
+    for pred_defendant in predict:
+        with open(ans_file + '/' + pred_defendant['content_id'] + '.json', 'r', encoding = 'utf-8') as f:
+            ans = json.loads(f.read())
 
-                if ans_defendant['name'] == pred_defendant['name']:
+        ans_defendant = ans[0]
+    
+        # 每篇的分數 
+        em_loc_score = em_title_score = em_laws_score = 0
+        inter_loc_score = inter_title_score = inter_laws_score = 0
+        precision_loc_score = precision_title_score = precision_laws_score = 0
+        recall_loc_score = recall_title_score = recall_laws_score = 0
+        f1_loc_score = f1_title_score = f1_laws_score = 0
+        fuzzy_loc_score = fuzzy_title_score = fuzzy_laws_score = 0
 
-                    em_loc_temp, inter_loc_temp, prec_loc_temp, rec_loc_temp, f1_loc_temp, fuzzy_loc_temp = score_calculate(ans_defendant['job_location'], pred_defendant['job_location'])
-                    em_tit_temp, inter_tit_temp, prec_tit_temp, rec_tit_temp, f1_tit_temp, fuzzy_tit_temp = score_calculate(ans_defendant['job_title'], pred_defendant['job_title'])
-                    em_law_temp, inter_law_temp, prec_law_temp, rec_law_temp, f1_law_temp, fuzzy_law_temp = score_calculate(ans_defendant['laws'], pred_defendant['laws'])
+        if ans_defendant['name'] == pred_defendant['name']:
+
+            em_loc_temp, inter_loc_temp, prec_loc_temp, rec_loc_temp, f1_loc_temp, fuzzy_loc_temp = score_calculate(ans_defendant['job_location'], pred_defendant['job_location'])
+            em_tit_temp, inter_tit_temp, prec_tit_temp, rec_tit_temp, f1_tit_temp, fuzzy_tit_temp = score_calculate(ans_defendant['job_title'], pred_defendant['job_title'])
+            em_law_temp, inter_law_temp, prec_law_temp, rec_law_temp, f1_law_temp, fuzzy_law_temp = score_calculate(ans_defendant['laws'], pred_defendant['laws'])
 
 
-                    em_loc_score, em_title_score, em_laws_score = em_loc_temp+em_loc_score, em_tit_temp+em_title_score, em_law_temp+em_laws_score
-                    inter_loc_score, inter_title_score, inter_laws_score = inter_loc_temp+inter_loc_score, inter_tit_temp+inter_title_score, inter_law_temp+inter_laws_score
-                    precision_loc_score, precision_title_score, precision_laws_score = prec_loc_temp+precision_loc_score, prec_tit_temp+precision_title_score, prec_law_temp+precision_laws_score
-                    recall_loc_score, recall_title_score, recall_laws_score = rec_loc_temp+recall_loc_score, rec_tit_temp+recall_title_score, rec_law_temp+recall_laws_score
-                    f1_loc_score, f1_title_score, f1_laws_score = f1_loc_temp+f1_loc_score, f1_tit_temp+f1_title_score, f1_law_temp+f1_laws_score
-                    fuzzy_loc_score, fuzzy_title_score, fuzzy_laws_score = fuzzy_loc_temp+fuzzy_loc_score, fuzzy_tit_temp+fuzzy_title_score, fuzzy_law_temp+fuzzy_laws_score
+            em_loc_score, em_title_score, em_laws_score = em_loc_temp+em_loc_score, em_tit_temp+em_title_score, em_law_temp+em_laws_score
+            inter_loc_score, inter_title_score, inter_laws_score = inter_loc_temp+inter_loc_score, inter_tit_temp+inter_title_score, inter_law_temp+inter_laws_score
+            precision_loc_score, precision_title_score, precision_laws_score = prec_loc_temp+precision_loc_score, prec_tit_temp+precision_title_score, prec_law_temp+precision_laws_score
+            recall_loc_score, recall_title_score, recall_laws_score = rec_loc_temp+recall_loc_score, rec_tit_temp+recall_title_score, rec_law_temp+recall_laws_score
+            f1_loc_score, f1_title_score, f1_laws_score = f1_loc_temp+f1_loc_score, f1_tit_temp+f1_title_score, f1_law_temp+f1_laws_score
+            fuzzy_loc_score, fuzzy_title_score, fuzzy_laws_score = fuzzy_loc_temp+fuzzy_loc_score, fuzzy_tit_temp+fuzzy_title_score, fuzzy_law_temp+fuzzy_laws_score
 
-                    # 印出每個被告單位 職稱及法條的分數
-                    # print("id:",ans_defendant['content_id'])
-                    # print(em_loc_score, em_title_score, em_laws_score)
-                    # print(inter_loc_score, inter_title_score, inter_laws_score)
-                    # print(precision_loc_score, precision_title_score, precision_laws_score)
-                    # print(recall_loc_score, recall_title_score, recall_laws_score)
-                    # print(f1_loc_score, f1_title_score, f1_laws_score)
+            # 印出每個被告單位 職稱及法條的分數
+            # print("id:",ans_defendant['content_id'])
+            # print(em_loc_score, em_title_score, em_laws_score)
+            # print(inter_loc_score, inter_title_score, inter_laws_score)
+            # print(precision_loc_score, precision_title_score, precision_laws_score)
+            # print(recall_loc_score, recall_title_score, recall_laws_score)
+            # print(f1_loc_score, f1_title_score, f1_laws_score)
 
-                    em_loc.append(em_loc_score)
-                    em_tit.append(em_title_score)
-                    em_law.append(em_laws_score)
+            em_loc.append(em_loc_score)
+            em_tit.append(em_title_score)
+            em_law.append(em_laws_score)
 
-                    inter_loc.append(inter_loc_score)
-                    inter_tit.append(inter_title_score)
-                    inter_law.append(inter_laws_score)
+            inter_loc.append(inter_loc_score)
+            inter_tit.append(inter_title_score)
+            inter_law.append(inter_laws_score)
 
-                    prec_loc.append(precision_loc_score)
-                    prec_tit.append(precision_title_score)
-                    prec_law.append(precision_laws_score)
+            prec_loc.append(precision_loc_score)
+            prec_tit.append(precision_title_score)
+            prec_law.append(precision_laws_score)
 
-                    rec_loc.append(recall_loc_score)
-                    rec_tit.append(recall_title_score)
-                    rec_law.append(recall_laws_score)
+            rec_loc.append(recall_loc_score)
+            rec_tit.append(recall_title_score)
+            rec_law.append(recall_laws_score)
 
-                    f1_loc.append(f1_loc_score)
-                    f1_tit.append(f1_title_score)
-                    f1_law.append(f1_laws_score)
+            f1_loc.append(f1_loc_score)
+            f1_tit.append(f1_title_score)
+            f1_law.append(f1_laws_score)
 
-                    fuzzy_loc.append(fuzzy_loc_score)
-                    fuzzy_tit.append(fuzzy_title_score)
-                    fuzzy_law.append(fuzzy_laws_score)
+            fuzzy_loc.append(fuzzy_loc_score)
+            fuzzy_tit.append(fuzzy_title_score)
+            fuzzy_law.append(fuzzy_laws_score)
 
-                    em_total += [em_loc_score, em_title_score, em_laws_score]
-                    inter_total += [inter_loc_score, inter_title_score, inter_laws_score]
-                    prec_total += [precision_loc_score, precision_title_score, precision_laws_score]
-                    rec_total += [recall_loc_score, recall_title_score, recall_laws_score]
-                    f1_total += [f1_loc_score, f1_title_score, f1_laws_score]
-                    fuzzy_total += [fuzzy_loc_score, fuzzy_title_score, fuzzy_laws_score]
+            em_total += [em_loc_score, em_title_score, em_laws_score]
+            inter_total += [inter_loc_score, inter_title_score, inter_laws_score]
+            prec_total += [precision_loc_score, precision_title_score, precision_laws_score]
+            rec_total += [recall_loc_score, recall_title_score, recall_laws_score]
+            f1_total += [f1_loc_score, f1_title_score, f1_laws_score]
+            fuzzy_total += [fuzzy_loc_score, fuzzy_title_score, fuzzy_laws_score]
 
     # 印出個別分數
     print('em分數: ')
