@@ -68,6 +68,7 @@ def copy_file():
 if __name__ == "__main__":
     if os.path.isdir('db_ans_data'):
         shutil.rmtree('db_ans_data')
+    if os.path.isdir('db_ori_data'):
         shutil.rmtree('db_ori_data')
     get_labeled_data()
     get_ori_data()
