@@ -52,7 +52,15 @@ def precision(ans_list, predict_list):
     temp_precision = 0
     ans = set(ans_list)
     predict = set(predict_list)
-    tp = len(ans & predict)
+    # tp = len(ans & predict)
+    tp = 0
+    for subpredict in predict_list:
+        for subans in ans_list:
+            if all(pred in subans for pred in subpredict):
+                try:
+                    tp += 1
+                except:
+                    pass
     fp = len(predict) - tp
     if len(ans_list) == 0:
         if len(predict_list) == 0:
@@ -70,7 +78,15 @@ def recall(ans_list, predict_list):
     temp_recall = 0
     ans = set(ans_list)
     predict = set(predict_list)
-    tp = len(ans & predict)
+    # tp = len(ans & predict)
+    tp = 0
+    for subpredict in predict_list:
+        for subans in ans_list:
+            if all(pred in subans for pred in subpredict):
+                try:
+                    tp += 1
+                except:
+                    pass
     fn = len(ans) - tp
     if len(ans_list) == 0:
         if len(predict_list) == 0:
