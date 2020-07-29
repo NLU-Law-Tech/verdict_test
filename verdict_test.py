@@ -223,12 +223,12 @@ def main(ans_file = 'db_ans_data', predict_file = 'db_ans.json'):
                 fuzzy_loc_score, fuzzy_title_score, fuzzy_laws_score = fuzzy_loc_temp+fuzzy_loc_score, fuzzy_tit_temp+fuzzy_title_score, fuzzy_law_temp+fuzzy_laws_score
 
                 # 印出每個被告單位 職稱及法條的分數
-                print("id:",pred_defendant['content_id'])
-                print(em_loc_score, em_title_score, em_laws_score)
-                print(inter_loc_score, inter_title_score, inter_laws_score)
-                print(precision_loc_score, precision_title_score, precision_laws_score)
-                print(recall_loc_score, recall_title_score, recall_laws_score)
-                print(f1_loc_score, f1_title_score, f1_laws_score)
+                # print("id:",pred_defendant['content_id'])
+                # print(em_loc_score, em_title_score, em_laws_score)
+                # print(inter_loc_score, inter_title_score, inter_laws_score)
+                # print(precision_loc_score, precision_title_score, precision_laws_score)
+                # print(recall_loc_score, recall_title_score, recall_laws_score)
+                # print(f1_loc_score, f1_title_score, f1_laws_score)
 
                 em_loc.append(em_loc_score)
                 em_tit.append(em_title_score)
