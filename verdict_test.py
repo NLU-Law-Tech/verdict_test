@@ -33,11 +33,22 @@ def fuzzymatch(ans_list, predict_list):
     else:    
         for subpredict in predict_list:
             for subans in ans_list:
-                if all(pred in subans for pred in subpredict):
+                start = 0
+                end = 0
+                flag = True
+                for pred in subpredict:
+                    start = subans.find(pred, start)
+                    if start < end:
+                        flag = False
+                    end = start     
+                if flag:
                     try:
                         temp_fuzzy += 1/len(ans_list)
                     except:
                         pass
+        if temp_fuzzy > 1:
+            temp_fuzzy = 1
+        
     return temp_fuzzy
 
 def intersect(ans_list, predict_list):
@@ -50,18 +61,27 @@ def intersect(ans_list, predict_list):
 
 def precision(ans_list, predict_list):
     temp_precision = 0
-    ans = set(ans_list)
-    predict = set(predict_list)
     # tp = len(ans & predict)
     tp = 0
     for subpredict in predict_list:
         for subans in ans_list:
-            if all(pred in subans for pred in subpredict):
+            start = 0
+            end = 0
+            flag = True
+            for pred in subpredict:
+                start = subans.find(pred, start)
+                if start < end:
+                    flag = False
+                end = start     
+            if flag:
                 try:
                     tp += 1
                 except:
                     pass
-    fp = len(predict) - tp
+    if tp > len(ans_list):
+        tp = len(ans_list)
+
+    fp = len(set(predict_list)) - tp
     if len(ans_list) == 0:
         if len(predict_list) == 0:
             temp_precision = 1
@@ -76,18 +96,27 @@ def precision(ans_list, predict_list):
 
 def recall(ans_list, predict_list):
     temp_recall = 0
-    ans = set(ans_list)
-    predict = set(predict_list)
     # tp = len(ans & predict)
     tp = 0
     for subpredict in predict_list:
         for subans in ans_list:
-            if all(pred in subans for pred in subpredict):
+            start = 0
+            end = 0
+            flag = True
+            for pred in subpredict:
+                start = subans.find(pred, start)
+                if start < end:
+                    flag = False
+                end = start     
+            if flag:
                 try:
                     tp += 1
                 except:
                     pass
-    fn = len(ans) - tp
+    if tp > len(ans_list):
+        tp = len(ans_list)
+
+    fn = len(set(ans_list)) - tp
     if len(ans_list) == 0:
         if len(predict_list) == 0:
             temp_recall = 1
@@ -150,7 +179,7 @@ def score_calculate(ans_list, predict_list):
 
     return temp_em, temp_inter, temp_precision, temp_recall, temp_f1, temp_fuzzy
 
-def main(ans_file = 'db_ans_data', predict_file = 'predict.json'):
+def main(ans_file = 'db_ans_data', predict_file = 'db_ans.json'):
 
     with open(predict_file, 'r', encoding = 'utf-8') as fp:
         predict = json.loads(fp.read())
@@ -194,12 +223,12 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json'):
                 fuzzy_loc_score, fuzzy_title_score, fuzzy_laws_score = fuzzy_loc_temp+fuzzy_loc_score, fuzzy_tit_temp+fuzzy_title_score, fuzzy_law_temp+fuzzy_laws_score
 
                 # 印出每個被告單位 職稱及法條的分數
-                # print("id:",ans_defendant['content_id'])
-                # print(em_loc_score, em_title_score, em_laws_score)
-                # print(inter_loc_score, inter_title_score, inter_laws_score)
-                # print(precision_loc_score, precision_title_score, precision_laws_score)
-                # print(recall_loc_score, recall_title_score, recall_laws_score)
-                # print(f1_loc_score, f1_title_score, f1_laws_score)
+                print("id:",pred_defendant['content_id'])
+                print(em_loc_score, em_title_score, em_laws_score)
+                print(inter_loc_score, inter_title_score, inter_laws_score)
+                print(precision_loc_score, precision_title_score, precision_laws_score)
+                print(recall_loc_score, recall_title_score, recall_laws_score)
+                print(f1_loc_score, f1_title_score, f1_laws_score)
 
                 em_loc.append(em_loc_score)
                 em_tit.append(em_title_score)
