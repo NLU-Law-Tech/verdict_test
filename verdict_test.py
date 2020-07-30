@@ -44,10 +44,9 @@ def fuzzymatch(ans_list, predict_list):
                 if flag:
                     try:
                         temp_fuzzy += 1/len(ans_list)
+                        break
                     except:
                         pass
-        if temp_fuzzy > 1:
-            temp_fuzzy = 1
         
     return temp_fuzzy
 
@@ -76,10 +75,9 @@ def precision(ans_list, predict_list):
             if flag:
                 try:
                     tp += 1
+                    break
                 except:
                     pass
-    if tp > len(ans_list):
-        tp = len(ans_list)
 
     fp = len(set(predict_list)) - tp
     if len(ans_list) == 0:
@@ -111,10 +109,9 @@ def recall(ans_list, predict_list):
             if flag:
                 try:
                     tp += 1
+                    break
                 except:
                     pass
-    if tp > len(ans_list):
-        tp = len(ans_list)
 
     fn = len(set(ans_list)) - tp
     if len(ans_list) == 0:
