@@ -56,6 +56,7 @@ def fuzzymatch(ans_list, predict_list, fs, length):
                 show(subans, '', 'R', fs,length)
         else:
             for subpredict in predict_list:
+                repeat = True
                 for subans in ans_list:
                     start = 0
                     end = 0
@@ -67,12 +68,11 @@ def fuzzymatch(ans_list, predict_list, fs, length):
                         end = start     
                     if flag:
                         try:
-                            temp_fuzzy += 1/len(ans_list)
+                            if repeat:
+                                temp_fuzzy += 1/len(ans_list)
                             show(subans, subpredict, 'A', fs,length)
-                            break
                         except:
                             show(subans, subpredict, 'R', fs,length)
-                            pass
                     else:
                         show(subans, subpredict, 'R', fs,length)
         
@@ -192,10 +192,9 @@ def countup(fs, ans_file = 'db_ans_data'):
 
 def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs,length):
     
-    if reg != '':
-        fs.write(''.rjust(15, '-') + '\n')
-        fs.write(reg + '\n')
-        fs.write(''.rjust(70, '-') + '\n')
+    fs.write(''.rjust(15, '-') + '\n')
+    fs.write(reg + '\n')
+    fs.write(''.rjust(70, '-') + '\n')
 
     temp_em = 0
     temp_em += exactmatch(ans_list, predict_list)
@@ -222,9 +221,8 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
     f1.append(temp_f1)
     fuzzy.append(temp_fuzzy)
 
-    if reg != '':
-        fs.write(''.rjust(separate_length, '=') + '\n')
-        fs.write('EM:' + "{:.2f}".format(temp_em) + '  Recall:' + "{:.2f}".format(temp_recall) + '  F1:' + "{:.2f}".format(temp_f1) + '\n' + '\n')
+    fs.write(''.rjust(separate_length, '=') + '\n')
+    fs.write('EM:' + "{:.2f}".format(temp_fuzzy) + '  F1:' + "{:.2f}".format(temp_f1) + '\n' + '\n')
 
     return temp_em, temp_inter, temp_precision, temp_recall, temp_f1, temp_fuzzy
 
@@ -248,27 +246,45 @@ def main(ans_file = 'ans_data', predict_file = 'predict.json'):
 
     new_id = ''
     old_id = ''
+    each_fuzzy_verdict = []
+    each_f1_verdict = []
     # 每篇(predict是以被告為單位視為一篇)的分數 
     for pred_defendant in predict:
         # 開啟對應id的ans.json
         with open(ans_file + '/' + pred_defendant['content_id'] + '.json', 'r', encoding = 'utf-8') as f:
             ans = json.loads(f.read())
-
+        
+        # 判斷是不是同篇判決書
         new_id = pred_defendant['content_id']
         if new_id != old_id:
-            fs.write('ID： ' + pred_defendant['content_id'] + '\n')
-            fs.write(''.rjust(50, '-') + '\n\n')
+            if old_id == '':
+                fs.write('ID： ' + pred_defendant['content_id'] + '\n')
+                fs.write(''.rjust(50, '-') + '\n\n')
+            else:
+                each_fuzzy_verdict.append(numpy.mean([fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp]))
+                each_f1_verdict.append(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp]))
+                fs.write(old_id + ' AVG.' + '\n')
+                fs.write(''.rjust(separate_length, '=') + '\n')
+                fs.write('EM:' + "{:.2f}".format(numpy.mean(each_fuzzy_verdict)) + '  F1:' + "{:.2f}".format(numpy.mean(each_f1_verdict)) + '\n')
+                fs.write(''.rjust(separate_length, '-') + '\n\n' + '\n')
+                each_fuzzy_verdict.clear()
+                each_f1_verdict.clear()
+                fs.write('ID： ' + pred_defendant['content_id'] + '\n')
+                fs.write(''.rjust(50, '-') + '\n\n')
+        else:
+            each_fuzzy_verdict.append(numpy.mean([fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp]))
+            each_f1_verdict.append(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp]))
         old_id = new_id
-    
+
         for ans_defendant in ans:
             if ans_defendant['name'] == pred_defendant['name']:
                 
                 fs.write('被告： ' + ans_defendant['name'] + '\n')
                 em_loc_temp, inter_loc_temp, prec_loc_temp, rec_loc_temp, f1_loc_temp, fuzzy_loc_temp = score_calculate(ans_defendant['job_location'], pred_defendant['job_location'], em_loc, inter_loc, prec_loc, rec_loc, f1_loc, fuzzy_loc, "單位", fs, 15)
                 em_tit_temp, inter_tit_temp, prec_tit_temp, rec_tit_temp, f1_tit_temp, fuzzy_tit_temp = score_calculate(ans_defendant['job_title'], pred_defendant['job_title'], em_tit, inter_tit, prec_tit, rec_tit, f1_tit, fuzzy_tit, "職稱", fs, 15)
+                em_law_temp, inter_law_temp, prec_law_temp, rec_law_temp, f1_law_temp, fuzzy_law_temp = score_calculate(ans_defendant['laws'], pred_defendant['laws'], em_law, inter_law, prec_law, rec_law, f1_law, fuzzy_law, "法條", fs, 25)
                 fs.write(ans_defendant['name'] + ' AVG.' + '\n')
                 fs.write(''.rjust(separate_length, '=') + '\n')
-                em_law_temp, inter_law_temp, prec_law_temp, rec_law_temp, f1_law_temp, fuzzy_law_temp = score_calculate(ans_defendant['laws'], pred_defendant['laws'], em_law, inter_law, prec_law, rec_law, f1_law, fuzzy_law, '', fs, 25)
 
                 em_total += [em_loc_temp, em_tit_temp, em_law_temp]
                 inter_total += [inter_loc_temp, inter_tit_temp, inter_law_temp]
@@ -277,17 +293,18 @@ def main(ans_file = 'ans_data', predict_file = 'predict.json'):
                 f1_total += [f1_loc_temp, f1_tit_temp, f1_law_temp]
                 fuzzy_total += [fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp]
 
-                fs.write('EM:' + "{:.2f}".format(numpy.mean([em_loc_temp, em_tit_temp, em_law_temp])) + '  Recall:' + "{:.2f}".format(numpy.mean([rec_loc_temp, rec_tit_temp, rec_law_temp])) + '  F1:' + "{:.2f}".format(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp])) + '\n')
+                fs.write('EM:' + "{:.2f}".format(numpy.mean([fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp])) + '  F1:' + "{:.2f}".format(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp])) + '\n')
                 fs.write(''.rjust(separate_length, '-') + '\n\n' + '\n')
 
     fs.write('TOTAL' + '\n')
     fs.write(''.rjust(separate_length, '-') + '\n')
     countup(fs, ans_file = ans_file)
     fs.write(''.rjust(separate_length, '-') + '\n')
-    fs.write('AVG 職稱 EM:' + "{:.2f}".format(numpy.mean(em_tit)) + '  Recall:' + "{:.2f}".format(numpy.mean(rec_tit)) + '  F1:' + "{:.2f}".format(numpy.mean(f1_tit)) + '\n')
-    fs.write('AVG 單位 EM:' + "{:.2f}".format(numpy.mean(em_loc)) + '  Recall:' + "{:.2f}".format(numpy.mean(rec_loc)) + '  F1:' + "{:.2f}".format(numpy.mean(f1_loc)) + '\n')
+    fs.write('AVG 單位 EM:' + "{:.2f}".format(numpy.mean(fuzzy_loc)) + '  F1:' + "{:.2f}".format(numpy.mean(f1_loc)) + '\n')
+    fs.write('AVG 職稱 EM:' + "{:.2f}".format(numpy.mean(fuzzy_tit)) + '  F1:' + "{:.2f}".format(numpy.mean(f1_tit)) + '\n')
+    fs.write('AVG 法條 EM:' + "{:.2f}".format(numpy.mean(fuzzy_law)) + '  F1:' + "{:.2f}".format(numpy.mean(f1_law)) + '\n')
     fs.write(''.rjust(separate_length, '=') + '\n')
-    fs.write('AVG     EM:' + "{:.2f}".format(numpy.mean(em_total)) + '  Recall:' + "{:.2f}".format(numpy.mean(rec_total)) + '  F1:' + "{:.2f}".format(numpy.mean(f1_total)) + '\n')    
+    fs.write('AVG     EM:' + "{:.2f}".format(numpy.mean(fuzzy_total)) + '  F1:' + "{:.2f}".format(numpy.mean(f1_total)) + '\n')    
     fs.close()
 
 if __name__ == "__main__":
