@@ -21,8 +21,7 @@ def align(string, length=25):
     if difference == 0:
         return string
     elif difference < 0:
-        print('ERROR')
-        return None
+        difference = 5
     chinese_pattern = u'[?([\u4E00-\u9FA5]'
     if re.search(chinese_pattern,string) != None: 
         space = '　' 
