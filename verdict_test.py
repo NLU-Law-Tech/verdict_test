@@ -295,6 +295,14 @@ def main(ans_file = 'ans_data', predict_file = 'predict.json'):
                 fs.write('EM:' + "{:.2f}".format(numpy.mean([fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp])) + '  F1:' + "{:.2f}".format(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp])) + '\n')
                 fs.write(''.rjust(separate_length, '-') + '\n\n' + '\n')
 
+    
+    each_fuzzy_verdict.append(numpy.mean([fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp]))
+    each_f1_verdict.append(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp]))
+    fs.write(old_id + ' AVG.' + '\n')
+    fs.write(''.rjust(separate_length, '=') + '\n')
+    fs.write('EM:' + "{:.2f}".format(numpy.mean(each_fuzzy_verdict)) + '  F1:' + "{:.2f}".format(numpy.mean(each_f1_verdict)) + '\n')
+    fs.write(''.rjust(separate_length, '-') + '\n\n' + '\n')
+    
     fs.write('TOTAL' + '\n')
     fs.write(''.rjust(separate_length, '-') + '\n')
     countup(fs, ans_file = ans_file)
