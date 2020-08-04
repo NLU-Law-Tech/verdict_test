@@ -198,8 +198,8 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
     for index, pred in enumerate(predict_list):
         predict_list[index] = splitspace(pred)
         
-    fs.write(''.rjust(15, '¯') + '▕\n')
-    fs.write('  　　' + reg + '　　  ▕' + '\n')
+    fs.write(''.rjust(15, '-') + '\n')
+    fs.write(' ＊＊　' + reg + '　＊＊　  ' + '\n')
     fs.write(''.rjust(70, '-') + '\n')
 
     temp_em = 0
