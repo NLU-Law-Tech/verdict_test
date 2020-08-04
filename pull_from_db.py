@@ -28,8 +28,10 @@ def get_ori_data():
 def check_file():
     ori_list = []
     ans_list = []
+    count = 0
     for filename in os.listdir('db_ori_data'):
         ori_list.append(filename.replace('.txt',""))
+        count+=1
     for filename in os.listdir('db_ans_data'):
         ans_list.append(filename.replace('.json',""))
 
@@ -38,10 +40,9 @@ def check_file():
     s2 = set(ans_list)
     remove1 = list(s1.difference(s2))
     remove2 = list(s2.difference(s1))
-    print('db_ori_data多的檔案:')
-    print(remove1)
-    print('db_ans_data多的檔案:')
-    print(remove2)
+    print('db_ori_data miss match:%s'%remove1)
+    print('db_ans_data miss match:%s'%remove2)
+    print("pull from database:%d"%count)
 
     # 刪檔案:https://www.delftstack.com/zh-tw/howto/python/how-to-delete-a-file-and-directory/
     for r1 in remove1:
