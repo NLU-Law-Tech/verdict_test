@@ -35,7 +35,8 @@ def show(ans, predict, a_r, fs, length):
 def splitspace(string):
     remove_list = [' ', '　', '\\n', '\\r', '\r', '\n', '股份有限公司', '有限公司', '無限公司', '兩合公司', '公司']
     for rem in remove_list:
-        string = string.replace(rem, '')
+        if rem.find('公司法') == -1:
+            string = string.replace(rem, '')
     return string
 
 def exactmatch(ans_list, predict_list):
