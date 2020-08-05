@@ -325,5 +325,4 @@ def main(ans_file = 'ans_data', predict_file = 'predict.json'):
     fs.close()
 
 if __name__ == "__main__":
-    # main()
-    print(splitspace("公司法第149條"))
+    main()
