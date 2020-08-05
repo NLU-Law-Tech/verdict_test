@@ -33,10 +33,12 @@ def show(ans, predict, a_r, fs, length):
     fs.write(align(ans, length) + align(predict, length) + a_r + '\n')
 
 def splitspace(string):
-    remove_list = [' ', '　', '\\n', '\\r', '\r', '\n', '股份有限公司', '有限公司', '無限公司', '兩合公司', '公司']
+    remove_list = [' ', '　', '\\n', '\\r', '\r', '\n']
+    company_list = ['股份有限公司$', '有限公司$', '無限公司$', '兩合公司$', '公司$']
     for rem in remove_list:
-        if rem.find('公司法') == -1:
-            string = string.replace(rem, '')
+        string = string.replace(rem, '')
+    for com in company_list:
+        string = re.sub(com, '', string)
     return string
 
 def exactmatch(ans_list, predict_list):
@@ -323,4 +325,5 @@ def main(ans_file = 'ans_data', predict_file = 'predict.json'):
     fs.close()
 
 if __name__ == "__main__":
-    main()
+    # main()
+    print(splitspace("公司法第149條"))
