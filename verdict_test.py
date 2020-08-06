@@ -231,7 +231,7 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
     fuzzy.append(temp_fuzzy)
 
     fs.write(''.rjust(separate_length, '=') + '\n')
-    fs.write('EM: ' + "{:.2f}".format(temp_fuzzy) + '  F1: ' + "{:.2f}".format(temp_f1) + '\n' + '\n')
+    fs.write('Precision: '+ "{:.2f}".format(temp_precision) + '      Recall: ' + "{:.2f}".format(temp_recall) + '      F1: ' + "{:.2f}".format(temp_f1) + '\n' + '\n')
 
     return temp_em, temp_inter, temp_precision, temp_recall, temp_f1, temp_fuzzy
 
@@ -255,7 +255,8 @@ def main(ans_file = 'ans_data', predict_file = 'predict.json'):
 
     new_id = ''
     old_id = ''
-    each_fuzzy_verdict = []
+    each_precision_verdict = []
+    each_recall_verdict = []
     each_f1_verdict = []
     # 每篇(predict是以被告為單位視為一篇)的分數 
     for pred_defendant in predict:
@@ -270,18 +271,22 @@ def main(ans_file = 'ans_data', predict_file = 'predict.json'):
                 fs.write('ID： ' + pred_defendant['content_id'] + '\n')
                 fs.write(''.rjust(50, '-') + '\n\n')
             else:
-                each_fuzzy_verdict.append(numpy.mean([fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp]))
+                each_precision_verdict.append(numpy.mean([prec_loc_temp, prec_tit_temp, prec_law_temp]))
+                each_recall_verdict.append(numpy.mean([rec_loc_temp, rec_tit_temp, rec_law_temp]))
                 each_f1_verdict.append(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp]))
                 fs.write(old_id + ' AVG.' + '\n')
                 fs.write(''.rjust(separate_length, '=') + '\n')
-                fs.write('EM: ' + "{:.2f}".format(numpy.mean(each_fuzzy_verdict)) + '  F1: ' + "{:.2f}".format(numpy.mean(each_f1_verdict)) + '\n')
+                fs.write('Precision: '+ "{:.2f}".format(numpy.mean(each_precision_verdict)) + '      Recall: ' + "{:.2f}".format(numpy.mean(each_recall_verdict)) + '      F1: ' + "{:.2f}".format(numpy.mean(each_f1_verdict)) + '\n')
                 fs.write(''.rjust(separate_length, '-') + '\n\n' + '\n')
-                each_fuzzy_verdict.clear()
+                
+                each_precision_verdict.clear()
+                each_recall_verdict.clear()
                 each_f1_verdict.clear()
                 fs.write('ID： ' + pred_defendant['content_id'] + '\n')
                 fs.write(''.rjust(50, '-') + '\n\n')
         else:
-            each_fuzzy_verdict.append(numpy.mean([fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp]))
+            each_precision_verdict.append(numpy.mean([prec_loc_temp, prec_tit_temp, prec_law_temp]))
+            each_recall_verdict.append(numpy.mean([rec_loc_temp, rec_tit_temp, rec_law_temp]))
             each_f1_verdict.append(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp]))
         old_id = new_id
 
@@ -302,26 +307,28 @@ def main(ans_file = 'ans_data', predict_file = 'predict.json'):
                 f1_total += [f1_loc_temp, f1_tit_temp, f1_law_temp]
                 fuzzy_total += [fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp]
 
-                fs.write('EM: ' + "{:.2f}".format(numpy.mean([fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp])) + '  F1: ' + "{:.2f}".format(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp])) + '\n')
+                fs.write('Precision: '+ "{:.2f}".format(numpy.mean([prec_loc_temp, prec_tit_temp, prec_law_temp])) + '      Recall: ' + "{:.2f}".format(numpy.mean([rec_loc_temp, rec_tit_temp, rec_law_temp])) + '      F1: ' + "{:.2f}".format(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp]))  + '\n')
                 fs.write(''.rjust(separate_length, '-') + '\n\n' + '\n')
 
-    
-    each_fuzzy_verdict.append(numpy.mean([fuzzy_loc_temp, fuzzy_tit_temp, fuzzy_law_temp]))
+    each_precision_verdict.append(numpy.mean([prec_loc_temp, prec_tit_temp, prec_law_temp]))
+    each_recall_verdict.append(numpy.mean([rec_loc_temp, rec_tit_temp, rec_law_temp]))
     each_f1_verdict.append(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp]))
     fs.write(old_id + ' AVG.' + '\n')
     fs.write(''.rjust(separate_length, '=') + '\n')
-    fs.write('EM: ' + "{:.2f}".format(numpy.mean(each_fuzzy_verdict)) + '  F1: ' + "{:.2f}".format(numpy.mean(each_f1_verdict)) + '\n')
+    fs.write('Precision: '+ "{:.2f}".format(numpy.mean(each_precision_verdict)) + '      Recall: ' + "{:.2f}".format(numpy.mean(each_recall_verdict)) + '      F1: ' + "{:.2f}".format(numpy.mean(each_f1_verdict)) + '\n')
     fs.write(''.rjust(separate_length, '-') + '\n\n' + '\n')
     
     fs.write('TOTAL' + '\n')
     fs.write(''.rjust(separate_length, '-') + '\n')
     countup(fs, ans_file = ans_file)
     fs.write(''.rjust(separate_length, '-') + '\n')
-    fs.write('AVG 單位 EM: ' + "{:.2f}".format(numpy.mean(fuzzy_loc)) + '  F1: ' + "{:.2f}".format(numpy.mean(f1_loc)) + '\n')
-    fs.write('AVG 職稱 EM: ' + "{:.2f}".format(numpy.mean(fuzzy_tit)) + '  F1: ' + "{:.2f}".format(numpy.mean(f1_tit)) + '\n')
-    fs.write('AVG 法條 EM: ' + "{:.2f}".format(numpy.mean(fuzzy_law)) + '  F1: ' + "{:.2f}".format(numpy.mean(f1_law)) + '\n')
+    fs.write('AVG 單位 Precision: ' + "{:.2f}".format(numpy.mean(prec_loc)) + '  Recall: ' + "{:.2f}".format(numpy.mean(rec_loc)) + '  F1: ' + "{:.2f}".format(numpy.mean(f1_loc)) + '\n')
+    fs.write('AVG 職稱 Precision: ' + "{:.2f}".format(numpy.mean(prec_tit)) + '  Recall: ' + "{:.2f}".format(numpy.mean(rec_tit)) + '  F1: ' + "{:.2f}".format(numpy.mean(f1_tit)) + '\n')
+    fs.write('AVG 法條 Precision: ' + "{:.2f}".format(numpy.mean(prec_law)) + '  Recall: ' + "{:.2f}".format(numpy.mean(rec_law)) + '  F1: ' + "{:.2f}".format(numpy.mean(f1_law)) + '\n')
+
+
     fs.write(''.rjust(separate_length, '=') + '\n')
-    fs.write('AVG     EM: ' + "{:.2f}".format(numpy.mean(fuzzy_total)) + '  F1: ' + "{:.2f}".format(numpy.mean(f1_total)) + '\n')    
+    fs.write('AVG     Precision: ' + "{:.2f}".format(numpy.mean(prec_total)) + '  Recall: ' + "{:.2f}".format(numpy.mean(rec_total)) + '  F1: ' + "{:.2f}".format(numpy.mean(f1_total)) + '\n')
     fs.close()
 
 if __name__ == "__main__":
