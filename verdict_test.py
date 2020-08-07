@@ -68,7 +68,7 @@ def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, lengt
                     end = start     
                 if flag:
                     try:
-                        if subans != '' and subpredict != '':
+                        if ans_list[index_2] != '' and predict_list[index_1] != '':
                             temp_fuzzy += 1/len(ans_list)
                             show(ori_ans_list[index_2], ori_predict_list[index_1], 'A', fs,length)
                             predict_list[index_1] = ''
@@ -244,7 +244,7 @@ def show_score(fs, special_string, prec_list, rec_list, f1_list):
 def show_separate(fs, separate_len, separate_string, break_line):
     fs.write(''.rjust(separate_len, separate_string) + break_line)
 
-def main(ans_file = 'ans_data', predict_file = 'predict.json'):
+def main(ans_file = 'db_ans_data', predict_file = 'predict.json'):
 
     fs = open('report.txt', 'w')
 
