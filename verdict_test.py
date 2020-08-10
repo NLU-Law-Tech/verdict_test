@@ -159,10 +159,12 @@ def recall(ans_list, predict_list):
     return temp_recall
 
 def get_tp_score(ans_list, predict_list):
+    reg_ans_list = ans_list.copy()
+    reg_predict_list = predict_list.copy()
     tp = 0
     # predict是ans的subset
-    for index_1, subpredict in enumerate(predict_list):
-        for index_2, subans in enumerate(ans_list):
+    for index_1, subpredict in enumerate(reg_ans_list):
+        for index_2, subans in enumerate(reg_predict_list):
             start = 0
             end = 0
             flag = True
@@ -173,16 +175,16 @@ def get_tp_score(ans_list, predict_list):
                 end = start     
             if flag:
                 try:
-                    if ans_list[index_2] != '' and predict_list[index_1] != '':
+                    if reg_ans_list[index_2] != '' and reg_predict_list[index_1] != '':
                         tp += 1
-                        predict_list[index_1] = ''
-                        ans_list[index_2] = ''
+                        reg_predict_list[index_1] = ''
+                        reg_ans_list[index_2] = ''
                 except:
                     pass
 
     # ans是predict的subset
-    for index_1, subans in enumerate(ans_list):
-        for index_2, subpredict in enumerate(predict_list):
+    for index_1, subans in enumerate(reg_ans_list):
+        for index_2, subpredict in enumerate(reg_predict_list):
             start = 0
             end = 0
             flag = True
@@ -193,10 +195,10 @@ def get_tp_score(ans_list, predict_list):
                 end = start     
             if flag:
                 try:
-                    if ans_list[index_1] != '' and predict_list[index_2] != '':
+                    if reg_ans_list[index_1] != '' and reg_predict_list[index_2] != '':
                         tp += 1
-                        predict_list[index_1] = ''
-                        ans_list[index_2] = ''
+                        reg_predict_list[index_1] = ''
+                        reg_ans_list[index_2] = ''
                 except:
                     pass
 
