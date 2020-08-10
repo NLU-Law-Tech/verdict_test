@@ -1,2 +1,3 @@
 VerdictFormat>=1.5.0
+cn2an
 git+https://github.com/Josiriser/VerdictFormat.git@master
