@@ -57,6 +57,7 @@ def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, lengt
                 if subpredict == subans:
                     show(ori_ans_list[index_2], ori_predict_list[index_1], 'A', fs, length)
     else:
+        # predict是ans的subset
         for index_1, subpredict in enumerate(predict_list):
             for index_2, subans in enumerate(ans_list):
                 start = 0
@@ -72,6 +73,27 @@ def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, lengt
                         if ans_list[index_2] != '' and predict_list[index_1] != '':
                             temp_fuzzy += 1/len(ans_list)
                             show(ori_ans_list[index_2], ori_predict_list[index_1], 'A', fs,length)
+                            predict_list[index_1] = ''
+                            ans_list[index_2] = ''
+                    except:
+                        pass
+
+        # ans是predict的subset
+        for index_1, subans in enumerate(ans_list):
+            for index_2, subpredict in enumerate(predict_list):
+                start = 0
+                end = 0
+                flag = True
+                for ans in subans:
+                    start = subpredict.find(ans, start)
+                    if start < end:
+                        flag = False
+                    end = start     
+                if flag:
+                    try:
+                        if ans_list[index_1] != '' and predict_list[index_2] != '':
+                            temp_fuzzy += 1/len(ans_list)
+                            show(ori_ans_list[index_2], ori_predict_list[index_1], 'A_ans是predict的subset', fs,length)
                             predict_list[index_1] = ''
                             ans_list[index_2] = ''
                     except:
@@ -97,23 +119,7 @@ def intersect(ans_list, predict_list):
 def precision(ans_list, predict_list):
     temp_precision = 0
     # tp = len(ans & predict)
-    tp = 0
-    for subpredict in predict_list:
-        for subans in ans_list:
-            start = 0
-            end = 0
-            flag = True
-            for pred in subpredict:
-                start = subans.find(pred, start)
-                if start < end:
-                    flag = False
-                end = start     
-            if flag:
-                try:
-                    tp += 1
-                    break
-                except:
-                    pass
+    tp = get_tp_score(ans_list, predict_list)
 
     if tp > len(ans_list):
         tp = len(ans_list)
@@ -134,23 +140,7 @@ def precision(ans_list, predict_list):
 def recall(ans_list, predict_list):
     temp_recall = 0
     # tp = len(ans & predict)
-    tp = 0
-    for subpredict in predict_list:
-        for subans in ans_list:
-            start = 0
-            end = 0
-            flag = True
-            for pred in subpredict:
-                start = subans.find(pred, start)
-                if start < end:
-                    flag = False
-                end = start     
-            if flag:
-                try:
-                    tp += 1
-                    break
-                except:
-                    pass
+    tp = get_tp_score(ans_list, predict_list)
     
     if tp > len(ans_list):
         tp = len(ans_list)
@@ -167,6 +157,50 @@ def recall(ans_list, predict_list):
         except:
             temp_recall = 0
     return temp_recall
+
+def get_tp_score(ans_list, predict_list):
+    tp = 0
+    # predict是ans的subset
+    for index_1, subpredict in enumerate(predict_list):
+        for index_2, subans in enumerate(ans_list):
+            start = 0
+            end = 0
+            flag = True
+            for pred in subpredict:
+                start = subans.find(pred, start)
+                if start < end:
+                    flag = False
+                end = start     
+            if flag:
+                try:
+                    if ans_list[index_2] != '' and predict_list[index_1] != '':
+                        tp += 1
+                        predict_list[index_1] = ''
+                        ans_list[index_2] = ''
+                except:
+                    pass
+
+    # ans是predict的subset
+    for index_1, subans in enumerate(ans_list):
+        for index_2, subpredict in enumerate(predict_list):
+            start = 0
+            end = 0
+            flag = True
+            for ans in subans:
+                start = subpredict.find(ans, start)
+                if start < end:
+                    flag = False
+                end = start     
+            if flag:
+                try:
+                    if ans_list[index_1] != '' and predict_list[index_2] != '':
+                        tp += 1
+                        predict_list[index_1] = ''
+                        ans_list[index_2] = ''
+                except:
+                    pass
+
+    return tp
 
 def f1score(ans_list, predict_list):
     temp_f1 = 0
