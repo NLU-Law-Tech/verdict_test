@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import cn2an
 import numpy
 
 separate_length = 70
@@ -195,14 +196,18 @@ def countup(fs, ans_file = 'db_ans_data'):
     fs.write('被告人數　: ' + str(len(verdict_name)) + '\n')
 
 def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs, length):
-    
+
     ori_ans_list = ans_list.copy()
     ori_predict_list = predict_list.copy()
+
+    # 處理後綴以及中文轉阿拉伯數字
     for index, ans in enumerate(ans_list):
         ans_list[index] = splitspace(ans)
+        ans_list[index] = cn2an.transform(ans_list[index], 'cn2an')
     for index, pred in enumerate(predict_list):
         predict_list[index] = splitspace(pred)
-        
+        predict_list[index] = cn2an.transform(predict_list[index], 'cn2an')
+
     show_separate(fs, 15, '-', '\n')
     fs.write(' ＊＊　' + reg + '　＊＊　  ' + '\n')
     show_separate(fs, 70, '-', '\n')
