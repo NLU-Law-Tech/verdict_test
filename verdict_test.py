@@ -35,7 +35,7 @@ def show(ans, predict, a_r, fs, length):
 
 def splitspace(string):
     remove_list = [' ', '　', '\\n', '\\r', '\r', '\n', '[UNK]']
-    company_list = ['股份有限公司$', '有限公司$', '無限公司$', '兩合公司$', '公司$']
+    company_list = ['股份有限公司$', '有限公司$', '無限公司$', '兩合公司$', '公司$', '^中華民國']
     for rem in remove_list:
         string = string.replace(rem, '')
     for com in company_list:
