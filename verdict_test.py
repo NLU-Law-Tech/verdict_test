@@ -197,8 +197,13 @@ def get_tp_score(ans_list, predict_list):
                 try:
                     if reg_ans_list[index_1] != '' and reg_predict_list[index_2] != '':
                         tp += 1
+<<<<<<< HEAD
                         reg_predict_list[index_2] = ''
                         reg_ans_list[index_1] = ''
+=======
+                        reg_predict_list[index_1] = ''
+                        reg_ans_list[index_2] = ''
+>>>>>>> bdf9195fccf068fc6a7faca69b55aca30bc9cce9
                 except:
                     pass
 
