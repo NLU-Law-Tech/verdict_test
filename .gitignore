@@ -22,3 +22,4 @@ db_ori_data/*
 !db_ori_data/5d30da9fcbd1c48dc97624de.txt
 report.txt
 predict.json
+.vscode
