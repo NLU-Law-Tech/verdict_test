@@ -163,8 +163,8 @@ def get_tp_score(ans_list, predict_list):
     reg_predict_list = predict_list.copy()
     tp = 0
     # predict是ans的subset
-    for index_1, subpredict in enumerate(reg_ans_list):
-        for index_2, subans in enumerate(reg_predict_list):
+    for index_1, subpredict in enumerate(reg_predict_list):
+        for index_2, subans in enumerate(reg_ans_list):
             start = 0
             end = 0
             flag = True
