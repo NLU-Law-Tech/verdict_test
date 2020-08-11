@@ -231,7 +231,7 @@ def countup(fs, ans_file = 'db_ans_data'):
     fs.write('篇數     : ' + str(len(ans_list)) + '\n')
     fs.write('被告人數　: ' + str(len(verdict_name)) + '\n')
 
-def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs, length):
+def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs, length, transform):
 
     ori_ans_list = ans_list.copy()
     ori_predict_list = predict_list.copy()
@@ -239,10 +239,12 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
     # 處理後綴以及中文轉阿拉伯數字
     for index, ans in enumerate(ans_list):
         ans_list[index] = splitspace(ans)
-        ans_list[index] = cn2an.transform(ans_list[index], 'cn2an')
+        if transform:
+            ans_list[index] = cn2an.transform(ans_list[index], 'cn2an')
     for index, pred in enumerate(predict_list):
         predict_list[index] = splitspace(pred)
-        predict_list[index] = cn2an.transform(predict_list[index], 'cn2an')
+        if transform:
+            predict_list[index] = cn2an.transform(predict_list[index], 'cn2an')
 
     show_separate(fs, 15, '-', '\n')
     fs.write(' ＊＊　' + reg + '　＊＊　  ' + '\n')
@@ -344,9 +346,9 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json'):
             if ans_defendant['name'] == pred_defendant['name']:
                 
                 fs.write('被告： ' + ans_defendant['name'] + '\n')
-                em_loc_temp, inter_loc_temp, prec_loc_temp, rec_loc_temp, f1_loc_temp, fuzzy_loc_temp = score_calculate(ans_defendant['job_location'], pred_defendant['job_location'], em_loc, inter_loc, prec_loc, rec_loc, f1_loc, fuzzy_loc, "單位", fs, 15)
-                em_tit_temp, inter_tit_temp, prec_tit_temp, rec_tit_temp, f1_tit_temp, fuzzy_tit_temp = score_calculate(ans_defendant['job_title'], pred_defendant['job_title'], em_tit, inter_tit, prec_tit, rec_tit, f1_tit, fuzzy_tit, "職稱", fs, 15)
-                em_law_temp, inter_law_temp, prec_law_temp, rec_law_temp, f1_law_temp, fuzzy_law_temp = score_calculate(ans_defendant['laws'], pred_defendant['laws'], em_law, inter_law, prec_law, rec_law, f1_law, fuzzy_law, "法條", fs, 25)
+                em_loc_temp, inter_loc_temp, prec_loc_temp, rec_loc_temp, f1_loc_temp, fuzzy_loc_temp = score_calculate(ans_defendant['job_location'], pred_defendant['job_location'], em_loc, inter_loc, prec_loc, rec_loc, f1_loc, fuzzy_loc, "單位", fs, 15, False)
+                em_tit_temp, inter_tit_temp, prec_tit_temp, rec_tit_temp, f1_tit_temp, fuzzy_tit_temp = score_calculate(ans_defendant['job_title'], pred_defendant['job_title'], em_tit, inter_tit, prec_tit, rec_tit, f1_tit, fuzzy_tit, "職稱", fs, 15, False)
+                em_law_temp, inter_law_temp, prec_law_temp, rec_law_temp, f1_law_temp, fuzzy_law_temp = score_calculate(ans_defendant['laws'], pred_defendant['laws'], em_law, inter_law, prec_law, rec_law, f1_law, fuzzy_law, "法條", fs, 25, True)
                 fs.write(ans_defendant['name'] + ' AVG.' + '\n')
                 show_separate(fs, separate_length, '=', '\n')
 
