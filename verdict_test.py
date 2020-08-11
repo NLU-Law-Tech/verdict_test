@@ -34,7 +34,7 @@ def show(ans, predict, a_r, fs, length):
     fs.write(align(ans, length) + align(predict, length) + a_r + '\n')
 
 def splitspace(string):
-    remove_list = [' ', '　', '\\n', '\\r', '\r', '\n']
+    remove_list = [' ', '　', '\\n', '\\r', '\r', '\n', '[UNK]']
     company_list = ['股份有限公司$', '有限公司$', '無限公司$', '兩合公司$', '公司$']
     for rem in remove_list:
         string = string.replace(rem, '')
