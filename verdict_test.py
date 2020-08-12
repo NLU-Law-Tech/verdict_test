@@ -286,9 +286,9 @@ def show_score(fs, special_string, prec_list, rec_list, f1_list):
 def show_separate(fs, separate_len, separate_string, break_line):
     fs.write(''.rjust(separate_len, separate_string) + break_line)
 
-def main(ans_file = 'db_ans_data', predict_file = 'predict.json'):
+def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'report.txt'):
 
-    fs = open('report.txt', 'w')
+    fs = open(file_name, 'w')
 
     with open(predict_file, 'r', encoding = 'utf-8') as fp:
         predict = json.loads(fp.read())
