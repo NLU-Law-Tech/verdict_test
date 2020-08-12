@@ -215,20 +215,19 @@ def f1score(ans_list, predict_list):
     return temp_f1 
 
 # 統計判決書有幾篇幾個被告
-def countup(fs, ans_file = 'db_ans_data'):
-    ans_list = []
-    for filename in os.listdir(ans_file):
-        ans_list.append(filename.replace('.txt',""))
+def countup(fs, predict_file = 'predict.json'):
+    with open(predict_file, 'r', encoding = 'utf-8') as fp:
+        predict = json.loads(fp.read())
 
+    verdict_list = []
     verdict_name = []
-    for ans in ans_list:
-        with open(ans_file + '/' + ans, 'r', encoding = 'utf-8') as f:
-            ans_info = json.loads(f.read())
-
-        for info in ans_info:
-            verdict_name.append(info['name'])
-
-    fs.write('篇數     : ' + str(len(ans_list)) + '\n')
+    for content in predict:
+        for key, value in content.items():
+            if key == 'content_id':
+                verdict_list.append(value)
+            elif key == 'name':
+                verdict_name.append(value)
+    fs.write('篇數     : ' + str(len(set(verdict_list))) + '\n')
     fs.write('被告人數　: ' + str(len(verdict_name)) + '\n')
 
 def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs, length, transform):
@@ -372,7 +371,7 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json'):
     
     fs.write('TOTAL' + '\n')
     show_separate(fs, separate_length, '-', '\n')
-    countup(fs, ans_file = ans_file)
+    countup(fs, predict_file = predict_file)
     show_separate(fs, separate_length, '-', '\n')
     show_score(fs, 'AVG 單位 ', prec_loc, rec_loc, f1_loc)
     show_score(fs, 'AVG 職稱 ', prec_tit, rec_tit, f1_tit)
