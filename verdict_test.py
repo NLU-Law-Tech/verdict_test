@@ -242,12 +242,15 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
             if ans_list[index].find('百十') != -1:
                 ans_list[index] = ans_list[index].replace('百十', '百一十')
             ans_list[index] = cn2an.transform(ans_list[index], 'cn2an')
+            ans_list[index] = ans_list[index].partition('條')[0]
+    
     for index, pred in enumerate(predict_list):
         predict_list[index] = splitspace(pred)
         if transform:
             if predict_list[index].find('百十') != -1:
                 predict_list[index] = predict_list[index].replace('百十', '百一十')
             predict_list[index] = cn2an.transform(predict_list[index], 'cn2an')
+            predict_list[index] = predict_list[index].partition('條')[0]
 
     show_separate(fs, 15, '-', '\n')
     fs.write(' ＊＊　' + reg + '　＊＊　  ' + '\n')
