@@ -23,17 +23,20 @@ def get_labeled_data():
     data_dict = data_to_dict(data)
     Match_laws_list = get_Match_laws_list()
     for each_verdict in data_dict:
-        with open('db_ori_data' + '/' + each_verdict['doc_id'] + '.txt',"r",encoding='utf-8') as f:
-            ori = json.loads(f.read())
+        try:
+            with open('db_ori_data' + '/' + each_verdict['doc_id'] + '.txt',"r",encoding='utf-8') as f:
+                ori = json.loads(f.read())
 
-        # print(each_verdict['doc_id'])
-        # print(each_verdict['laws'])
-        Normalized_laws_list = Multilaws_to_Normalize(ori['judgement'], Match_laws_list, each_verdict['laws'])
-        # print(Normalized_laws_list)
-        for index, context in enumerate(each_verdict['laws']):
-            context['content'] = Normalized_laws_list[index]
+            # print(each_verdict['doc_id'])
+            # print(each_verdict['laws'])
+            Normalized_laws_list = Multilaws_to_Normalize(ori['judgement'], Match_laws_list, each_verdict['laws'])
+            # print(Normalized_laws_list)
+            for index, context in enumerate(each_verdict['laws']):
+                context['content'] = Normalized_laws_list[index]
 
-        # print(each_verdict['laws'])
+            # print(each_verdict['laws'])
+        except:
+            pass
 
     data = dict_to_string(data_dict)
     convert_to_test_format = Labeled_to_Test(data)
