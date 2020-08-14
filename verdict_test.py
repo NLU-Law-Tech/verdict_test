@@ -71,10 +71,11 @@ def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, lengt
                 if flag:
                     try:
                         if ans_list[index_2] != '' and predict_list[index_1] != '':
-                            temp_fuzzy += 1/len(ans_list)
-                            show(ori_ans_list[index_2], ori_predict_list[index_1], 'A', fs,length)
-                            predict_list[index_1] = ''
-                            ans_list[index_2] = ''
+                            if ans_list[index_2] != 'Null' and predict_list[index_1] != 'Null':
+                                temp_fuzzy += 1/len(ans_list)
+                                show(ori_ans_list[index_2], ori_predict_list[index_1], 'A', fs,length)
+                                predict_list[index_1] = ''
+                                ans_list[index_2] = ''
                     except:
                         pass
 
@@ -92,10 +93,11 @@ def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, lengt
                 if flag:
                     try:
                         if ans_list[index_1] != '' and predict_list[index_2] != '':
-                            temp_fuzzy += 1/len(ans_list)
-                            show(ori_ans_list[index_1], ori_predict_list[index_2], 'A_ans是predict的subset', fs,length)
-                            predict_list[index_2] = ''
-                            ans_list[index_1] = ''
+                            if ans_list[index_1] != 'Null' and predict_list[index_2] != 'Null':
+                                temp_fuzzy += 1/len(ans_list)
+                                show(ori_ans_list[index_1], ori_predict_list[index_2], 'A_ans是predict的subset', fs,length)
+                                predict_list[index_2] = ''
+                                ans_list[index_1] = ''
                     except:
                         pass
                 
@@ -118,13 +120,16 @@ def intersect(ans_list, predict_list):
 
 def precision(ans_list, predict_list):
     temp_precision = 0
-    # tp = len(ans & predict)
     tp = get_tp_score(ans_list, predict_list)
 
     if tp > len(ans_list):
         tp = len(ans_list)
 
-    fp = len(set(predict_list)) - tp
+    pre_len = 0
+    for pre in predict_list:
+        if pre != 'Null':
+            pre_len += 1
+    fp = pre_len - tp
     if len(ans_list) == 0:
         if len(predict_list) == 0:
             temp_precision = 1
@@ -139,13 +144,16 @@ def precision(ans_list, predict_list):
 
 def recall(ans_list, predict_list):
     temp_recall = 0
-    # tp = len(ans & predict)
     tp = get_tp_score(ans_list, predict_list)
     
     if tp > len(ans_list):
         tp = len(ans_list)
 
-    fn = len(set(ans_list)) - tp
+    ans_len = 0
+    for ans in ans_list:
+        if ans != 'Null':
+            ans_len += 1
+    fn = ans_len - tp
     if len(ans_list) == 0:
         if len(predict_list) == 0:
             temp_recall = 1
@@ -176,9 +184,10 @@ def get_tp_score(ans_list, predict_list):
             if flag:
                 try:
                     if reg_ans_list[index_2] != '' and reg_predict_list[index_1] != '':
-                        tp += 1
-                        reg_predict_list[index_1] = ''
-                        reg_ans_list[index_2] = ''
+                        if reg_ans_list[index_2] != 'Null' and reg_predict_list[index_1] != 'Null':
+                            tp += 1
+                            reg_predict_list[index_1] = ''
+                            reg_ans_list[index_2] = ''
                 except:
                     pass
 
@@ -196,9 +205,10 @@ def get_tp_score(ans_list, predict_list):
             if flag:
                 try:
                     if reg_ans_list[index_1] != '' and reg_predict_list[index_2] != '':
-                        tp += 1
-                        reg_predict_list[index_2] = ''
-                        reg_ans_list[index_1] = ''
+                        if reg_ans_list[index_1] != 'Null' and reg_predict_list[index_2] != 'Null':
+                            tp += 1
+                            reg_predict_list[index_2] = ''
+                            reg_ans_list[index_1] = ''
                 except:
                     pass
 
@@ -235,6 +245,8 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
     ori_ans_list = ans_list.copy()
     ori_predict_list = predict_list.copy()
 
+    exist_ans_list = []
+    exist_predict_list = []
     # 處理後綴以及中文轉阿拉伯數字
     for index, ans in enumerate(ans_list):
         ans_list[index] = splitspace(ans)
@@ -242,7 +254,15 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
             if ans_list[index].find('百十') != -1:
                 ans_list[index] = ans_list[index].replace('百十', '百一十')
             ans_list[index] = cn2an.transform(ans_list[index], 'cn2an')
-            ans_list[index] = ans_list[index].partition('條')[0]
+            last_index = ans_list[index].rfind('條')
+            if last_index != -1:
+                ans_list[index] = ans_list[index][:last_index]
+
+        if ans_list[index] not in exist_ans_list:
+            exist_ans_list.append(ans_list[index])
+        else:
+            ans_list[index] = 'Null'
+
     
     for index, pred in enumerate(predict_list):
         predict_list[index] = splitspace(pred)
@@ -250,7 +270,15 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
             if predict_list[index].find('百十') != -1:
                 predict_list[index] = predict_list[index].replace('百十', '百一十')
             predict_list[index] = cn2an.transform(predict_list[index], 'cn2an')
-            predict_list[index] = predict_list[index].partition('條')[0]
+            last_index = predict_list[index].rfind('條')
+            if last_index != -1:
+                predict_list[index] = predict_list[index][:last_index]
+
+        if predict_list[index] not in exist_predict_list:
+            exist_predict_list.append(predict_list[index])
+        else:
+            predict_list[index] = 'Null'
+
 
     show_separate(fs, 15, '-', '\n')
     fs.write(' ＊＊　' + reg + '　＊＊　  ' + '\n')
@@ -293,7 +321,7 @@ def show_score(fs, special_string, prec_list, rec_list, f1_list):
 def show_separate(fs, separate_len, separate_string, break_line):
     fs.write(''.rjust(separate_len, separate_string) + break_line)
 
-def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'report.txt'):
+def main(ans_file = 'db_ans_data', predict_file = 'predict_error.json', file_name = 'report.txt'):
 
     fs = open(file_name, 'w')
 
