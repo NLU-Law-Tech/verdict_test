@@ -453,7 +453,7 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'r
 
     fs.write('\n' + 'TOTAL' + '\n')
     show_separate(fs, separate_length, '-', '\n')
-    countup(fs, ans_file = 'db_ans_data', predict_file = predict_file)
+    countup(fs, ans_file = ans_file, predict_file = predict_file)
     show_separate(fs, separate_length, '-', '\n')
     show_score(fs, 'AVG 單位 ', prec_loc, rec_loc, f1_loc)
     show_score(fs, 'AVG 職稱 ', prec_tit, rec_tit, f1_tit)
