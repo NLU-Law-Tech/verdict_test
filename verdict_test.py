@@ -225,32 +225,59 @@ def f1score(ans_list, predict_list):
     return temp_f1 
 
 # 統計判決書有幾篇幾個被告
-def countup(fs, predict_file = 'predict.json'):
+def countup(fs, ans_file = 'db_ans_data', predict_file = 'predict.json'):
     with open(predict_file, 'r', encoding = 'utf-8') as fp:
         predict = json.loads(fp.read())
-
+    
+    verdict_name = 0
     verdict_list = []
-    verdict_name = []
-    for content in predict:
-        for key, value in content.items():
+    for pred_defendant in predict:
+        with open(ans_file + '/' + pred_defendant['content_id'] + '.json', 'r', encoding = 'utf-8') as f:
+            ans = json.loads(f.read())
+
+        for key, value in pred_defendant.items():
             if key == 'content_id':
                 verdict_list.append(value)
-            elif key == 'name':
-                verdict_name.append(value)
-    fs.write('篇數     : ' + str(len(set(verdict_list))) + '\n')
-    fs.write('被告人數　: ' + str(len(verdict_name)) + '\n')
 
-def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs, length, transform):
+        for ans_defendant in ans:
+            if ans_defendant['name'] == pred_defendant['name']:
+                verdict_name += 1
+    
+    fs.write('篇數     : ' + str(len(set(verdict_list))) + '\n')
+    fs.write('被告人數　: ' + str(verdict_name) + '\n')
+
+def show_count(fs, reg2, count_dict):
+    reg = reg2.replace(' ', '')
+    if reg == '總共':
+        count_dict[reg]['ans_total'] = count_dict['單位']['ans_total'] + count_dict['職稱']['ans_total'] + count_dict['法條']['ans_total']
+        count_dict[reg]['predict_total'] = count_dict['單位']['predict_total'] + count_dict['職稱']['predict_total'] + count_dict['法條']['predict_total']
+        count_dict[reg]['ans_empty'] = count_dict['單位']['ans_empty'] + count_dict['職稱']['ans_empty'] + count_dict['法條']['ans_empty']
+        count_dict[reg]['predict_empty'] = count_dict['單位']['predict_empty'] + count_dict['職稱']['predict_empty'] + count_dict['法條']['predict_empty']
+
+    fs.write('-- ' + reg2 + ' --'+ '\n')
+    fs.write('answer 非空筆數: ' + align(str(count_dict[reg]['ans_total']),5) + '       ')
+    fs.write('predict 非空筆數: ' + align(str(count_dict[reg]['predict_total']), 5) + '\n')
+    fs.write('answer 為空筆數: ' + align(str(count_dict[reg]['ans_empty']), 5) + '       ')
+    fs.write('predict 為空筆數: ' + align(str(count_dict[reg]['predict_empty']), 5)  + '\n')
+    fs.write( 'answer 空的比例: ' + str("{:.2f}".format(count_dict[reg]['ans_empty']/(count_dict[reg]['ans_total']+count_dict[reg]['ans_empty']))) + '        ')
+    fs.write( 'predict 空的比例: ' +  align("{:.2f}".format(count_dict[reg]['predict_empty']/(count_dict[reg]['predict_total']+count_dict[reg]['predict_empty']), 5)) + '\n\n')
+
+def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs, length, count_dict):
 
     ori_ans_list = ans_list.copy()
     ori_predict_list = predict_list.copy()
 
     exist_ans_list = []
     exist_predict_list = []
+    
     # 處理後綴以及中文轉阿拉伯數字
+    if len(ans_list) == 0:
+        count_dict[reg]['ans_empty'] += 1
+    else:
+        count_dict[reg]['ans_total'] += 1
     for index, ans in enumerate(ans_list):
         ans_list[index] = splitspace(ans)
-        if transform:
+        if reg == '法條':
             if ans_list[index].find('百十') != -1:
                 ans_list[index] = ans_list[index].replace('百十', '百一十')
             ans_list[index] = cn2an.transform(ans_list[index], 'cn2an')
@@ -263,10 +290,13 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
         else:
             ans_list[index] = 'Null'
 
-    
+    if len(predict_list) == 0:
+        count_dict[reg]['predict_empty'] += 1
+    else:
+        count_dict[reg]['predict_total'] += 1
     for index, pred in enumerate(predict_list):
         predict_list[index] = splitspace(pred)
-        if transform:
+        if reg == '法條':
             if predict_list[index].find('百十') != -1:
                 predict_list[index] = predict_list[index].replace('百十', '百一十')
             predict_list[index] = cn2an.transform(predict_list[index], 'cn2an')
@@ -321,8 +351,19 @@ def show_score(fs, special_string, prec_list, rec_list, f1_list):
 def show_separate(fs, separate_len, separate_string, break_line):
     fs.write(''.rjust(separate_len, separate_string) + break_line)
 
-def main(ans_file = 'db_ans_data', predict_file = 'predict_error.json', file_name = 'report.txt'):
+def create_dict(count_dict):
+    reg_list = ['單位', '職稱', '法條', '總共']
+    for reg in reg_list:
+        count_dict[reg] = {}
+        count_dict[reg]['ans_empty'] = 0
+        count_dict[reg]['ans_total'] = 0
+        count_dict[reg]['predict_empty'] = 0
+        count_dict[reg]['predict_total'] = 0
 
+
+def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'report.txt'):
+    count_dict = {}
+    create_dict(count_dict)
     fs = open(file_name, 'w')
 
     with open(predict_file, 'r', encoding = 'utf-8') as fp:
@@ -380,9 +421,9 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict_error.json', file_nam
             if ans_defendant['name'] == pred_defendant['name']:
                 
                 fs.write('被告： ' + ans_defendant['name'] + '\n')
-                em_loc_temp, inter_loc_temp, prec_loc_temp, rec_loc_temp, f1_loc_temp, fuzzy_loc_temp = score_calculate(ans_defendant['job_location'], pred_defendant['job_location'], em_loc, inter_loc, prec_loc, rec_loc, f1_loc, fuzzy_loc, "單位", fs, 15, False)
-                em_tit_temp, inter_tit_temp, prec_tit_temp, rec_tit_temp, f1_tit_temp, fuzzy_tit_temp = score_calculate(ans_defendant['job_title'], pred_defendant['job_title'], em_tit, inter_tit, prec_tit, rec_tit, f1_tit, fuzzy_tit, "職稱", fs, 15, False)
-                em_law_temp, inter_law_temp, prec_law_temp, rec_law_temp, f1_law_temp, fuzzy_law_temp = score_calculate(ans_defendant['laws'], pred_defendant['laws'], em_law, inter_law, prec_law, rec_law, f1_law, fuzzy_law, "法條", fs, 25, True)
+                em_loc_temp, inter_loc_temp, prec_loc_temp, rec_loc_temp, f1_loc_temp, fuzzy_loc_temp = score_calculate(ans_defendant['job_location'], pred_defendant['job_location'], em_loc, inter_loc, prec_loc, rec_loc, f1_loc, fuzzy_loc, "單位", fs, 15, count_dict)
+                em_tit_temp, inter_tit_temp, prec_tit_temp, rec_tit_temp, f1_tit_temp, fuzzy_tit_temp = score_calculate(ans_defendant['job_title'], pred_defendant['job_title'], em_tit, inter_tit, prec_tit, rec_tit, f1_tit, fuzzy_tit, "職稱", fs, 15, count_dict)
+                em_law_temp, inter_law_temp, prec_law_temp, rec_law_temp, f1_law_temp, fuzzy_law_temp = score_calculate(ans_defendant['laws'], pred_defendant['laws'], em_law, inter_law, prec_law, rec_law, f1_law, fuzzy_law, "法條", fs, 25, count_dict)
                 fs.write(ans_defendant['name'] + ' AVG.' + '\n')
                 show_separate(fs, separate_length, '=', '\n')
 
@@ -404,9 +445,15 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict_error.json', file_nam
     show_score(fs, '', each_precision_verdict, each_recall_verdict, each_f1_verdict)
     show_separate(fs, separate_length, '-', '\n\n\n')
     
-    fs.write('TOTAL' + '\n')
+    show_count(fs, '單 位', count_dict)
+    show_count(fs, '職 稱', count_dict)
+    show_count(fs, '法 條', count_dict)
+    show_count(fs, '總 共', count_dict)
+
+
+    fs.write('\n' + 'TOTAL' + '\n')
     show_separate(fs, separate_length, '-', '\n')
-    countup(fs, predict_file = predict_file)
+    countup(fs, ans_file = 'db_ans_data', predict_file = predict_file)
     show_separate(fs, separate_length, '-', '\n')
     show_score(fs, 'AVG 單位 ', prec_loc, rec_loc, f1_loc)
     show_score(fs, 'AVG 職稱 ', prec_tit, rec_tit, f1_tit)
