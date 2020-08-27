@@ -253,14 +253,27 @@ def show_count(fs, reg2, count_dict):
         count_dict[reg]['predict_total'] = count_dict['單位']['predict_total'] + count_dict['職稱']['predict_total'] + count_dict['法條']['predict_total']
         count_dict[reg]['ans_empty'] = count_dict['單位']['ans_empty'] + count_dict['職稱']['ans_empty'] + count_dict['法條']['ans_empty']
         count_dict[reg]['predict_empty'] = count_dict['單位']['predict_empty'] + count_dict['職稱']['predict_empty'] + count_dict['法條']['predict_empty']
+        count_dict[reg]['ans_pre_nonempty'] = count_dict['單位']['ans_pre_nonempty'] + count_dict['職稱']['ans_pre_nonempty'] + count_dict['法條']['ans_pre_nonempty']
+
+    pre_empty = ans_empty = ans_pre_empty = 0
+    pre_empty = count_dict[reg]['ans_total'] - count_dict[reg]['ans_pre_nonempty']
+    ans_empty = count_dict[reg]['predict_total'] - count_dict[reg]['ans_pre_nonempty']
+    ans_pre_empty = count_dict[reg]['ans_empty'] - ans_empty
 
     fs.write('-- ' + reg2 + ' --'+ '\n')
     fs.write('answer 非空筆數: ' + align(str(count_dict[reg]['ans_total']),5) + '       ')
-    fs.write('predict 非空筆數: ' + align(str(count_dict[reg]['predict_total']), 5) + '\n')
+    fs.write('predict 非空筆數: ' + align(str(count_dict[reg]['predict_total']), 5))
+    fs.write('\t\t\t   p r e d i c t\n')
+
     fs.write('answer 為空筆數: ' + align(str(count_dict[reg]['ans_empty']), 5) + '       ')
-    fs.write('predict 為空筆數: ' + align(str(count_dict[reg]['predict_empty']), 5)  + '\n')
+    fs.write('predict 為空筆數: ' + align(str(count_dict[reg]['predict_empty']), 5))
+    fs.write('          \t   |  Yes  |  No\n')
+
     fs.write( 'answer 空的比例: ' + str("{:.2f}".format(count_dict[reg]['ans_empty']/(count_dict[reg]['ans_total']+count_dict[reg]['ans_empty']))) + '        ')
-    fs.write( 'predict 空的比例: ' +  align("{:.2f}".format(count_dict[reg]['predict_empty']/(count_dict[reg]['predict_total']+count_dict[reg]['predict_empty']), 5)) + '\n\n')
+    fs.write( 'predict 空的比例: ' + "{:.2f}".format(count_dict[reg]['predict_empty']/(count_dict[reg]['predict_total']+count_dict[reg]['predict_empty'])))
+    fs.write('\t\t   a  -------------------\n')
+    fs.write(' '*51 + '\t\tn  Yes\t|  ' + str(count_dict[reg]['ans_pre_nonempty']) + '\t|  ' + str(pre_empty) + '\n')
+    fs.write(' '*51 + '\t\ts  No\t|  ' + str(ans_empty) + '\t|  ' + str(ans_pre_empty) + '\n\n')
 
 def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs, length, count_dict):
 
@@ -309,7 +322,10 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
         else:
             predict_list[index] = 'Null'
 
-
+    # for report_full
+    if len(ans_list) != 0 and len(predict_list) != 0:
+        count_dict[reg]['ans_pre_nonempty'] += 1
+    
     show_separate(fs, 15, '-', '\n')
     fs.write(' ＊＊　' + reg + '　＊＊　  ' + '\n')
     show_separate(fs, 70, '-', '\n')
@@ -359,6 +375,7 @@ def create_dict(count_dict):
         count_dict[reg]['ans_total'] = 0
         count_dict[reg]['predict_empty'] = 0
         count_dict[reg]['predict_total'] = 0
+        count_dict[reg]['ans_pre_nonempty'] = 0
 
 
 def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'report.txt'):
