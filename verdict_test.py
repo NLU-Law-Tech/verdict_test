@@ -263,17 +263,17 @@ def show_count(fs, reg2, count_dict):
     fs.write('-- ' + reg2 + ' --'+ '\n')
     fs.write('answer 非空筆數: ' + align(str(count_dict[reg]['ans_total']),5) + '       ')
     fs.write('predict 非空筆數: ' + align(str(count_dict[reg]['predict_total']), 5))
-    fs.write('\t\t\t   p r e d i c t\n')
+    fs.write('\t\t\t        p r e d i c t\n')
 
     fs.write('answer 為空筆數: ' + align(str(count_dict[reg]['ans_empty']), 5) + '       ')
     fs.write('predict 為空筆數: ' + align(str(count_dict[reg]['predict_empty']), 5))
-    fs.write('          \t   |  Yes  |  No\n')
+    fs.write('          \t    |  Yes  |  No\n')
 
     fs.write( 'answer 空的比例: ' + str("{:.2f}".format(count_dict[reg]['ans_empty']/(count_dict[reg]['ans_total']+count_dict[reg]['ans_empty']))) + '        ')
     fs.write( 'predict 空的比例: ' + "{:.2f}".format(count_dict[reg]['predict_empty']/(count_dict[reg]['predict_total']+count_dict[reg]['predict_empty'])))
     fs.write('\t\t   a  -------------------\n')
-    fs.write(' '*51 + '\t\tn  Yes\t|  ' + str(count_dict[reg]['ans_pre_nonempty']) + '\t|  ' + str(pre_empty) + '\n')
-    fs.write(' '*51 + '\t\ts  No\t|  ' + str(ans_empty) + '\t|  ' + str(ans_pre_empty) + '\n\n')
+    fs.write(' '*51 + '\t\t   n  Yes\t|  ' + str(count_dict[reg]['ans_pre_nonempty']) + '\t|  ' + str(pre_empty) + '\n')
+    fs.write(' '*51 + '\t\t   s  No\t|  ' + str(ans_empty) + '\t|  ' + str(ans_pre_empty) + '\n\n')
 
 def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs, length, count_dict):
 
