@@ -39,7 +39,7 @@ if __name__ == "__main__":
             
             #
             out['_id'] = judgement_id
-            # out['judgement'] = judgement
+            out['judgement'] = judgement
             out['defendant_scores'].append(defendant_score)
          
         #   
