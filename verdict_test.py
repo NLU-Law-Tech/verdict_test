@@ -379,6 +379,10 @@ def create_dict(count_dict):
 
 
 def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'report.txt'):
+    json_output = {}
+    json_output['defendant_scores'] = []
+    json_output['total_score'] = {}
+
     count_dict = {}
     create_dict(count_dict)
     fs = open(file_name, 'w')
@@ -415,6 +419,7 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'r
                 fs.write('ID： ' + pred_defendant['content_id'] + '\n')
                 show_separate(fs, 50, '-', '\n\n')
             else:
+                # 印出單篇最後結尾
                 each_precision_verdict.append(numpy.mean([prec_loc_temp, prec_tit_temp, prec_law_temp]))
                 each_recall_verdict.append(numpy.mean([rec_loc_temp, rec_tit_temp, rec_law_temp]))
                 each_f1_verdict.append(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp]))
@@ -422,7 +427,9 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'r
                 show_separate(fs, separate_length, '=', '\n')
                 show_score(fs, '', each_precision_verdict, each_recall_verdict, each_f1_verdict)
                 show_separate(fs, separate_length, '-', '\n\n\n')
+                # print(old_id,each_precision_verdict, each_recall_verdict, each_f1_verdict)
                 
+                # 印出單篇起頭
                 each_precision_verdict.clear()
                 each_recall_verdict.clear()
                 each_f1_verdict.clear()
@@ -453,6 +460,21 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'r
 
                 show_score(fs, '', [prec_loc_temp, prec_tit_temp, prec_law_temp], [rec_loc_temp, rec_tit_temp, rec_law_temp], [f1_loc_temp, f1_tit_temp, f1_law_temp])
                 show_separate(fs, separate_length, '-', '\n\n\n')
+                
+                _output_for_json = {
+                    "ID":old_id,
+                    "name":ans_defendant['name'],
+                    "unit_score":{"prec":float(prec_loc_temp),"recall":float(rec_loc_temp),"f1":float(f1_loc_temp)},
+                    "postion_score":{"prec":float(prec_tit_temp),"recall":float(rec_tit_temp),"f1":float(f1_tit_temp)},
+                    "law_score":{"prec":float(prec_law_temp),"recall":float(rec_law_temp),"f1":float(f1_law_temp)},
+                    "avg_score":{
+                            "prec":float(numpy.mean([prec_loc_temp, prec_tit_temp, prec_law_temp])),
+                            "recall":float(numpy.mean([rec_loc_temp, rec_tit_temp, rec_law_temp])),
+                            "f1":float(numpy.mean([f1_loc_temp, f1_tit_temp, f1_law_temp]))
+                        }
+                }
+                json_output['defendant_scores'].append(_output_for_json)
+                # print("%(ID)s %(name)s 單位:%(unit_score)s 職稱:%(postion_score)s 法條:%(law_score)s 平均:%(avg_score)s"%(_output_for_json))
 
     each_precision_verdict.append(numpy.mean([prec_loc_temp, prec_tit_temp, prec_law_temp]))
     each_recall_verdict.append(numpy.mean([rec_loc_temp, rec_tit_temp, rec_law_temp]))
@@ -478,6 +500,31 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'r
     
     show_separate(fs, separate_length, '=', '\n')
     show_score(fs, 'AVG     ', prec_total, rec_total, f1_total)
+
+    #
+    _output_for_json={
+        #
+        "unit_prec":float(numpy.mean(prec_loc)),
+        "unit_recall":float(numpy.mean(rec_loc)),
+        "unit_f1":float(numpy.mean(f1_loc)),
+        #
+        "position_prec":float(numpy.mean(prec_tit)),
+        "position_recall":float(numpy.mean(rec_tit)),
+        "position_f1":float(numpy.mean(f1_tit)),
+        #
+        "law_prec":float(numpy.mean(prec_law)),
+        "law_recall":float(numpy.mean(rec_law)),
+        "law_f1":float(numpy.mean(f1_law)),
+        #
+        "all_prec":float(numpy.mean(prec_total)),
+        "all_recall":float(numpy.mean(rec_total)),
+        "all_f1":float(numpy.mean(f1_total))
+    }
+    json_output['total_score'] = _output_for_json
+
+    with open("evaluate.json","w",encoding="utf-8") as f:
+        f.write(json.dumps(json_output,ensure_ascii=False))
+
     fs.close()
 
 if __name__ == "__main__":
