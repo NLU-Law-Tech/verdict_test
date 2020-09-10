@@ -461,10 +461,20 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'r
                 show_score(fs, '', [prec_loc_temp, prec_tit_temp, prec_law_temp], [rec_loc_temp, rec_tit_temp, rec_law_temp], [f1_loc_temp, f1_tit_temp, f1_law_temp])
                 show_separate(fs, separate_length, '-', '\n\n\n')
                 
+                # print(ans_defendant['job_location'])
                 
                 _output_for_json = {
                     "_id":old_id,
                     "name":ans_defendant['name'],
+                    #
+                    "predict_units":pred_defendant['job_location'],
+                    "predict_positions":pred_defendant['job_title'],
+                    "predict_laws":pred_defendant['laws'],
+
+                    "ans_units":ans_defendant['job_location'],
+                    "ans_positions":ans_defendant['job_title'],
+                    "ans_laws":ans_defendant['laws'],
+
                     "unit_score":{"prec":float(prec_loc_temp),"recall":float(rec_loc_temp),"f1":float(f1_loc_temp)},
                     "postion_score":{"prec":float(prec_tit_temp),"recall":float(rec_tit_temp),"f1":float(f1_tit_temp)},
                     "law_score":{"prec":float(prec_law_temp),"recall":float(rec_law_temp),"f1":float(f1_law_temp)},
