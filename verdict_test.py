@@ -377,6 +377,12 @@ def create_dict(count_dict):
         count_dict[reg]['predict_total'] = 0
         count_dict[reg]['ans_pre_nonempty'] = 0
 
+def clear_array(ary):
+    new_ary = []
+    for a in ary:
+        if a!= '':
+            new_ary.append(a)
+    return new_ary
 
 def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'report.txt'):
     json_output = {}
@@ -467,13 +473,13 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'r
                     "_id":old_id,
                     "name":ans_defendant['name'],
                     #
-                    "predict_units":pred_defendant['job_location'],
-                    "predict_positions":pred_defendant['job_title'],
-                    "predict_laws":pred_defendant['laws'],
+                    "predict_units":clear_array(pred_defendant['job_location']),
+                    "predict_positions":clear_array(pred_defendant['job_title']),
+                    "predict_laws":clear_array(pred_defendant['laws']),
 
-                    "ans_units":ans_defendant['job_location'],
-                    "ans_positions":ans_defendant['job_title'],
-                    "ans_laws":ans_defendant['laws'],
+                    "ans_units":clear_array(ans_defendant['job_location']),
+                    "ans_positions":clear_array(ans_defendant['job_title']),
+                    "ans_laws":clear_array(ans_defendant['laws']),
 
                     "unit_score":{"prec":float(prec_loc_temp),"recall":float(rec_loc_temp),"f1":float(f1_loc_temp)},
                     "postion_score":{"prec":float(prec_tit_temp),"recall":float(rec_tit_temp),"f1":float(f1_tit_temp)},
