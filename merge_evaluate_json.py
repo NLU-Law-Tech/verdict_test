@@ -30,22 +30,18 @@ if __name__ == "__main__":
     current_judgement_id = evaluate_data['defendant_scores'][0]['_id']
     
     count_judgement = 0
-    for i,defendant_score in enumerate(evaluate_data['defendant_scores']):
-        # print(i)
+    for i,defendant_score in enumerate(evaluate_data['defendant_scores']):        
         judgement_id = defendant_score['_id']
-        judgement = load_judgement(judgement_id)
 
         #
         if(current_judgement_id == judgement_id):
-            #
             out['defendant_scores'].append(defendant_score)
-            # print(defendant_score)
          
         #   
         elif(current_judgement_id != judgement_id):
             # write json
-            out['_id'] = judgement_id
-            out['judgement'] = judgement
+            out['_id'] = current_judgement_id
+            out['judgement'] = load_judgement(current_judgement_id)
             write_json(f_merge,data = out)
             # reset
             current_judgement_id = judgement_id
@@ -56,6 +52,6 @@ if __name__ == "__main__":
             count_judgement +=1
             # print(count_judgement)
     
-    out['_id'] = judgement_id
-    out['judgement'] = judgement
+    out['_id'] = current_judgement_id
+    out['judgement'] = load_judgement(current_judgement_id)
     write_json(f_merge,data = out)
