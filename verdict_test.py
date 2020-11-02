@@ -235,9 +235,9 @@ def countup(fs, ans_file = 'db_ans_data', predict_file = 'predict.json'):
         with open(ans_file + '/' + pred_defendant['content_id'] + '.json', 'r', encoding = 'utf-8') as f:
             ans = json.loads(f.read())
 
-        for key, value in pred_defendant.items():
-            if key == 'content_id':
-                verdict_list.append(value)
+        for k, v in pred_defendant.items():
+            if k == 'content_id':
+                verdict_list.append(v)
 
         for ans_defendant in ans:
             if ans_defendant['name'] == pred_defendant['name']:
