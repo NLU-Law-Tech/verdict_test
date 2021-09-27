@@ -6,9 +6,9 @@ from disassemble_judgement import disassemble_origin, disassemble_ans
 import os
 import shutil
 
-# http://140.120.13.242:15005/dump_ori_data
+# http://140.120.13.250:16004/dump_ori_data
 def get_ori_data():
-    r = requests.get('http://140.120.13.242:15005/dump_ori_data')
+    r = requests.get('http://140.120.13.250:16004/dump_ori_data')
     data_list = json.loads(r.text)
     with open("db_ori.txt","w",encoding='utf-8') as f:
         for data in data_list:
@@ -16,9 +16,9 @@ def get_ori_data():
             f.write(json.dumps(json.loads(_s),ensure_ascii=False))
             f.write('\n')
 
-# http://140.120.13.242:15005/dump_labeled_data
+# http://140.120.13.250:16004/dump_labeled_data
 def get_labeled_data():
-    r = requests.get('http://140.120.13.242:15005/dump_labeled_data')
+    r = requests.get('http://140.120.13.250:16004/dump_labeled_data')
     data = json.loads(r.text)
     data_dict = data_to_dict(data)
     Match_laws_list = get_Match_laws_list()

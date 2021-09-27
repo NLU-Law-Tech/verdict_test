@@ -3,8 +3,33 @@ import re
 import json
 import cn2an
 import numpy
+from loguru import logger
 
 separate_length = 70
+current_defendant_name = 'NO_SET'
+csv_writer = {
+    'laws':open('./report_laws.csv','w',encoding='utf-8'),
+    'units':open('./report_units.csv','w',encoding='utf-8'),
+    'positions':open('./report_positions.csv','w',encoding='utf-8')
+}
+
+for key,writer in csv_writer.items():
+    writer.write("type,id,name,ans,pred,stats\n")
+
+def write_csv(f_string):
+    logger.debug(f_string)
+    reg,id,current_defendant_name,ans,pred,stats = f_string.strip().split(",")
+    writer = None
+    reg = reg.strip()
+    if reg == '單位':
+        writer = csv_writer['units']
+    elif reg =='職稱':
+        writer = csv_writer['positions']
+    elif reg == '法條':
+        writer = csv_writer['laws']
+    assert writer is not None
+
+    writer.write(f"{f_string}\n")
 
 # ans_list及predict_list為整串預測出的答案list
 # 計算每一篇判決書之分數
@@ -48,7 +73,7 @@ def exactmatch(ans_list, predict_list):
         temp_em += 1
     return temp_em
 
-def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, length):
+def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, length, reg=None, current_defendant_name=None, id=None):
     temp_fuzzy = 0
     if ans_list == predict_list:
         temp_fuzzy += 1
@@ -56,6 +81,7 @@ def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, lengt
             for index_2, subans in enumerate(ans_list):
                 if subpredict == subans:
                     show(ori_ans_list[index_2], ori_predict_list[index_1], 'A', fs, length)
+                    write_csv(f"{reg},{id},{current_defendant_name},{ori_ans_list[index_2]},{ori_predict_list[index_1]},{'A'}")
     else:
         # predict是ans的subset
         for index_1, subpredict in enumerate(predict_list):
@@ -74,6 +100,7 @@ def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, lengt
                             if ans_list[index_2] != 'Null' and predict_list[index_1] != 'Null':
                                 temp_fuzzy += 1/len(ans_list)
                                 show(ori_ans_list[index_2], ori_predict_list[index_1], 'A', fs,length)
+                                write_csv(f"{reg},{id},{current_defendant_name},{ori_ans_list[index_2]},{ori_predict_list[index_1]},{'A'}")
                                 predict_list[index_1] = ''
                                 ans_list[index_2] = ''
                     except:
@@ -96,6 +123,7 @@ def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, lengt
                             if ans_list[index_1] != 'Null' and predict_list[index_2] != 'Null':
                                 temp_fuzzy += 1/len(ans_list)
                                 show(ori_ans_list[index_1], ori_predict_list[index_2], 'A_ans是predict的subset', fs,length)
+                                write_csv(f"{reg},{id},{current_defendant_name},{ori_ans_list[index_1]},{ori_predict_list[index_2]},{'A_ans是predict的subset'}")
                                 predict_list[index_2] = ''
                                 ans_list[index_1] = ''
                     except:
@@ -104,9 +132,11 @@ def fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, lengt
         for index, subans in enumerate(ans_list):
             if subans != '':
                 show(ori_ans_list[index], '空', 'R', fs,length)
+                write_csv(f"{reg},{id},{current_defendant_name},{ori_ans_list[index]},{'空'},{'R'}")
         for index, subpredict in enumerate(predict_list):
             if subpredict != '':
                 show('空', ori_predict_list[index], 'R', fs,length)
+                write_csv(f"{reg},{id},{current_defendant_name},{'空'},{ori_predict_list[index]},{'R'}")
     
     return temp_fuzzy
 
@@ -275,7 +305,7 @@ def show_count(fs, reg2, count_dict):
     fs.write(' '*51 + '\t\t   n  Yes\t|  ' + str(count_dict[reg]['ans_pre_nonempty']) + '\t|  ' + str(pre_empty) + '\n')
     fs.write(' '*51 + '\t\t   s  No\t|  ' + str(ans_empty) + '\t|  ' + str(ans_pre_empty) + '\n\n')
 
-def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs, length, count_dict):
+def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg, fs, length, count_dict,current_defendant_name,id):
 
     ori_ans_list = ans_list.copy()
     ori_predict_list = predict_list.copy()
@@ -346,7 +376,7 @@ def score_calculate(ans_list, predict_list, em, inter, prec, rec, f1, fuzzy, reg
     temp_f1 += f1score(ans_list, predict_list)
 
     temp_fuzzy = 0
-    temp_fuzzy += fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, length)
+    temp_fuzzy += fuzzymatch(ori_ans_list, ori_predict_list, ans_list, predict_list, fs, length, current_defendant_name=current_defendant_name,reg=reg,id=id)
 
     em.append(temp_em)
     inter.append(temp_inter)
@@ -436,11 +466,14 @@ def main(ans_file = 'db_ans_data', predict_file = 'predict.json', file_name = 'r
 
         for ans_defendant in ans:
             if ans_defendant['name'] == pred_defendant['name']:
-                
+                current_defendant_name = ans_defendant['name']
+                logger.debug(current_defendant_name)
+                logger.debug(ans_defendant['name'])
+    
                 fs.write('被告： ' + ans_defendant['name'] + '\n')
-                em_loc_temp, inter_loc_temp, prec_loc_temp, rec_loc_temp, f1_loc_temp, fuzzy_loc_temp = score_calculate(ans_defendant['job_location'], pred_defendant['job_location'], em_loc, inter_loc, prec_loc, rec_loc, f1_loc, fuzzy_loc, "單位", fs, 15, count_dict)
-                em_tit_temp, inter_tit_temp, prec_tit_temp, rec_tit_temp, f1_tit_temp, fuzzy_tit_temp = score_calculate(ans_defendant['job_title'], pred_defendant['job_title'], em_tit, inter_tit, prec_tit, rec_tit, f1_tit, fuzzy_tit, "職稱", fs, 15, count_dict)
-                em_law_temp, inter_law_temp, prec_law_temp, rec_law_temp, f1_law_temp, fuzzy_law_temp = score_calculate(ans_defendant['laws'], pred_defendant['laws'], em_law, inter_law, prec_law, rec_law, f1_law, fuzzy_law, "法條", fs, 25, count_dict)
+                em_loc_temp, inter_loc_temp, prec_loc_temp, rec_loc_temp, f1_loc_temp, fuzzy_loc_temp = score_calculate(ans_defendant['job_location'], pred_defendant['job_location'], em_loc, inter_loc, prec_loc, rec_loc, f1_loc, fuzzy_loc, "單位", fs, 15, count_dict,current_defendant_name,pred_defendant['content_id'])
+                em_tit_temp, inter_tit_temp, prec_tit_temp, rec_tit_temp, f1_tit_temp, fuzzy_tit_temp = score_calculate(ans_defendant['job_title'], pred_defendant['job_title'], em_tit, inter_tit, prec_tit, rec_tit, f1_tit, fuzzy_tit, "職稱", fs, 15, count_dict,current_defendant_name,pred_defendant['content_id'])
+                em_law_temp, inter_law_temp, prec_law_temp, rec_law_temp, f1_law_temp, fuzzy_law_temp = score_calculate(ans_defendant['laws'], pred_defendant['laws'], em_law, inter_law, prec_law, rec_law, f1_law, fuzzy_law, "法條", fs, 25, count_dict,current_defendant_name,pred_defendant['content_id'])
                 fs.write(ans_defendant['name'] + ' AVG.' + '\n')
                 show_separate(fs, separate_length, '=', '\n')
 
